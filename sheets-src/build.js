@@ -5,6 +5,7 @@ const path = require('path');
 const SPELLS = require('./spells.js');
 const CHARS = require('./chars.js');
 const OUT = process.argv[2];
+const ACCENT_DARK = {"#c4622d": "#ec8d5e", "#b8432f": "#f07b66", "#3d5ba8": "#8ea8ec", "#4f7a3a": "#93c577", "#2b7a8c": "#63c0d4", "#7a4aa8": "#bb92e6"};
 if (!OUT) throw new Error('usage: node build.js <site repo dir>');
 
 const PROF = 3;
@@ -55,7 +56,7 @@ const LVL = ['Cantrip', '1st level', '2nd level', '3rd level'];
 
 function fill(t, v) { return t.replace(/\{(\w+)\}/g, (_, k) => v[k] !== undefined ? v[k] : `{${k}}`); }
 
-function spellCard(name, c, tag, override) {
+function spellCard(name, c, tag, override, fullSrc) {
   const s = SPELLS[name];
   if (!s) throw new Error('missing spell ' + name);
   const m = mod(c.abilities[c.castAbility]);
@@ -63,8 +64,8 @@ function spellCard(name, c, tag, override) {
   const atk = (override && override.atk) || PROF + m;
   const v = { dc, atk: atk, mod: m, mageArmor: c.mageArmor };
   const flags = [s.conc ? '<span class="pill conc">Concentration</span>' : '', s.ritual ? '<span class="pill rit">Ritual</span>' : '', tag ? `<span class="pill src">${esc(tag)}</span>` : ''].join('');
-  return `<details class="spell"><summary><span class="sname">${esc(name)}</span><span class="smeta">${s.time.split(',')[0]} · ${esc(s.range.split(',')[0])}</span>${flags}</summary>
-<div class="sbody">
+  return `<details class="spell"><summary><span class="sh"><span class="sname">${esc(name)}</span><span class="smeta">${s.time.split(',')[0]} · ${esc(s.range.split(',')[0])}</span>${flags}</span></summary>
+<div class="sbody">${fullSrc ? `<p class="from"><b>Where it comes from:</b> ${esc(fullSrc)}</p>` : ''}
 <dl class="facts"><div><dt>Casting time</dt><dd>${esc(s.time)}</dd></div><div><dt>Range</dt><dd>${esc(s.range)}</dd></div><div><dt>Lasts</dt><dd>${esc(s.dur)}${s.conc ? ' (concentration)' : ''}</dd></div>${s.cost ? `<div><dt>Needs</dt><dd>${esc(s.cost)}</dd></div>` : ''}</dl>
 <p>${fill(s.what, v)}</p>
 <p class="roll"><b>What to roll:</b> ${fill(s.roll, v)}</p>
@@ -86,9 +87,10 @@ function page(c) {
     const [ab, use] = SKILLS[sk];
     const lv = c.skills[sk] || 0;
     let b = m[ab] + PROF * lv;
-    let note = lv === 2 ? 'Expert (double proficiency)' : lv === 1 ? 'Proficient' : '';
-    if (c.magician && (sk === 'Arcana' || sk === 'Nature')) { b += m.wis; note += (note ? ' + ' : '') + 'Magician (+Wis)'; }
-    return `<tr class="${lv ? 'prof' : ''}"><td><b>${sk}</b> <span class="muted">(${AB[ab].slice(0, 3)})</span><div class="use">${use}</div></td><td class="num">${sg(b)}</td><td class="muted small">${note || '—'}</td></tr>`;
+    const chips = [];
+    if (lv === 2) chips.push('Expert'); else if (lv === 1) chips.push('Trained');
+    if (c.magician && (sk === 'Arcana' || sk === 'Nature')) { b += m.wis; chips.push('+ Wisdom (Magician)'); }
+    return `<tr class="${lv ? 'prof' : ''}"><td><b>${sk}</b> <span class="muted">(${AB[ab].slice(0, 3)})</span>${chips.map((x) => ` <span class="chip">${x}</span>`).join('')}<div class="use">${use}</div></td><td class="num">${sg(b)}</td></tr>`;
   }).join('');
   const percep = 10 + m.wis + PROF * (c.skills.Perception || 0);
   const abilRows = Object.keys(AB).map((k) => {
@@ -100,11 +102,12 @@ function page(c) {
   const freeT = (c.free || []).map((f) => tracker(f.key, f.label, f.count, c.slug)).join('');
   const featT = c.features.filter((f) => f.track).map((f) => tracker(f.track.key, f.track.label, f.track.count, c.slug)).join('');
   const hd = tracker('hd', `Hit Dice (d${c.hitDie})`, 5, c.slug, 'spend on a Short Rest');
-  const cantrips = (c.cantrips || []).map((n) => spellCard(n, c, (c.cantripSrc || {})[n])).join('');
+  const short = (t) => t.split(/[:(]/)[0].trim();
+  const cantrips = (c.cantrips || []).map((n) => { const src = (c.cantripSrc || {})[n]; return spellCard(n, c, src && short(src), null, src); }).join('');
   const always = Object.entries(c.always || {}).map(([n, v]) => {
     const o = typeof v === 'string' ? { src: v } : v;
     return { n, o, l: SPELLS[n].lvl };
-  }).sort((a, b) => a.l - b.l).map(({ n, o }) => spellCard(n, c, LVL[SPELLS[n].lvl] + ' · ' + o.src, o)).join('');
+  }).sort((a, b) => a.l - b.l).map(({ n, o }) => spellCard(n, c, LVL[SPELLS[n].lvl] + ' · ' + short(o.src), o, o.src)).join('');
   const byLvl = [1, 2, 3].map((l) => {
     const list = c.prepared.filter((n) => SPELLS[n].lvl === l);
     if (!list.length) return '';
@@ -112,9 +115,13 @@ function page(c) {
   }).join('');
   const book = (c.spellbookOnly || []).map((n) => spellCard(n, c, LVL[SPELLS[n].lvl] + ' · in spellbook')).join('');
   const forms = (c.forms || []).map((f) => { const b = FORMS[f]; return `<div class="form"><h4>${f} <span class="muted">${b.size}</span></h4><p><b>AC</b> ${b.ac} · <b>Speed</b> ${b.speed}</p><p>${b.atk}</p><p class="muted">${b.notes}</p></div>`; }).join('');
-  const feats = c.features.map((f) => `<details class="feat"><summary><span class="sname">${esc(f.name)}</span><span class="pill type">${esc(f.type)}</span></summary><div class="sbody"><p class="muted small">${esc(f.src)}${f.uses ? ' · ' + esc(f.uses) : ''}</p>${f.text}</div></details>`).join('');
-  const atkRows = c.attacks.map((a) => `<tr><td><b>${esc(a[0])}</b><div class="use">${esc(a[4])}</div></td><td class="num">${a[1] === 'Save' || a[1] === '—' ? a[1] : 'd20 ' + a[1].replace('+', '+ ')}</td><td>${esc(a[2])}</td><td class="small">${esc(a[3])}</td></tr>`).join('');
-  const turn = c.turn.map(([h, t]) => `<li><b>${h}.</b> ${t}</li>`).join('');
+  const feats = c.features.map((f) => `<details class="feat"><summary><span class="sh"><span class="sname">${esc(f.name)}</span><span class="pill type">${esc(f.type)}</span></span></summary><div class="sbody"><p class="muted small">${esc(f.src)}${f.uses ? ' · ' + esc(f.uses) : ''}</p>${f.text}</div></details>`).join('');
+  const atkRows = c.attacks.map((a) => {
+    const add = a[1] === '—';
+    const hit = a[1] === 'Save' ? '<div class="kv"><span class="k">Target rolls</span><span class="v">a save</span></div>' : add ? '' : `<div class="kv"><span class="k">To hit</span><span class="v">d20 ${a[1].replace('+', '+ ')}</span></div>`;
+    return `<li class="atk${add ? ' add' : ''}"><h3 class="aname">${esc(a[0])}</h3><div class="kvs">${hit}<div class="kv"><span class="k">${add ? 'Adds' : a[1] === 'Save' ? 'Effect' : 'Damage'}</span><span class="v">${esc(a[2])}</span></div>${add ? '' : `<div class="kv"><span class="k">Range</span><span class="v r">${esc(a[3])}</span></div>`}</div><p class="use">${esc(a[4])}</p></li>`;
+  }).join('');
+  const turn = c.turn.map(([h, t]) => `<div class="tr"><dt>${h}</dt><dd>${t}</dd></div>`).join('');
   const who = Object.entries(c.who || {}).map(([k, v]) => `<p><b>${esc(k)}:</b> ${esc(v)}</p>`).join('') || '<p class="muted">Nothing written yet. Make up a look, a habit, and one thing you want. Tell your DM.</p>';
 
   return `<!doctype html>
@@ -125,13 +132,16 @@ function page(c) {
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/favicon.svg">
 <title>${esc(c.name)} · Character Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,50&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:${c.accent}; --soft:#f4f1ea; --conc:#8a5a00; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; } }
-:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; }
+:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:${c.accent}; --soft:#e3e7ef; --conc:#8a5a00; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --accent:${ACCENT_DARK[c.accent]}; --conc:#f0b44a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --accent:${ACCENT_DARK[c.accent]}; --conc:#f0b44a; color-scheme: dark; }
 * { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding:0 max(16px, env(safe-area-inset-right)) 80px max(16px, env(safe-area-inset-left)); }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 80px; }
+body::before { content:""; position:fixed; inset:0 0 auto; height: env(safe-area-inset-top, 0px); z-index:10; background: var(--bg); }
+a:focus-visible, summary:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
 .wrap { max-width: 820px; margin: 0 auto; }
 h1,h2,h3 { font-family:var(--display); margin:0; text-wrap:balance; }
 h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); line-height:1.05; }
@@ -143,14 +153,15 @@ ul { margin: 4px 0 8px; padding-left: 20px; } li { margin-bottom: 6px; }
 header { padding: 32px 0 12px; border-bottom: 4px solid var(--accent); margin-bottom: 8px; }
 .eyebrow { font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; }
 .line { font-weight: 700; color: var(--accent); margin-top: 4px; }
-nav { position: sticky; top: 0; z-index: 5; background: var(--bg); display:flex; gap:6px; overflow-x:auto; padding: 10px 0; border-bottom: 1px solid var(--line); }
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display:flex; gap:6px; overflow-x:auto; padding: 10px 0; border-bottom: 1px solid var(--line); }
 nav a { flex:none; font-size:.85rem; font-weight:700; color:var(--fg); text-decoration:none; padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:var(--panel); }
 section { margin-top: 32px; scroll-margin-top: 64px; }
 .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:10px; }
-.stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:8px; margin-top: 14px; }
-.stat { background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:12px; padding:10px 12px; }
+.stats { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; margin-top: 14px; }
+@media (min-width: 640px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 12px; min-width:0; }
 .stat .k { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
-.stat .v { font-family:var(--display); font-size:1.8rem; font-weight:700; line-height:1.1; }
+.stat .v { font-family:var(--display); font-size:1.8rem; font-weight:700; line-height:1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
 .stat .n { font-size:.8rem; color:var(--muted); line-height:1.3; }
 table { width:100%; border-collapse: collapse; font-size: .95rem; }
 th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align: top; }
@@ -161,18 +172,38 @@ td.hi { color: var(--accent); }
 tr.prof td:first-child b { color: var(--accent); }
 .use { font-size:.83rem; color:var(--muted); line-height:1.35; margin-top:2px; }
 .scroll { overflow-x:auto; }
-ol.turn { padding-left: 22px; margin: 0; } ol.turn li { margin-bottom: 10px; }
+dl.turn { margin: 10px 0 0; display:grid; gap: 14px; }
+.turn .tr { display:grid; gap: 2px; }
+.turn dt { font-weight:700; color: var(--accent); }
+.turn dd { margin:0; }
+@media (min-width: 640px) { .turn .tr { grid-template-columns: 13rem 1fr; gap: 16px; } }
+.atks { list-style:none; margin: 10px 0 0; padding:0; display:grid; gap:8px; }
+.atk { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; gap:8px; min-width:0; margin:0; }
+.atk.add { background: var(--soft); border-style: dashed; }
+.aname { font-family: var(--body); font-size: 1.02rem; margin:0; }
+.kvs { display:flex; flex-wrap:wrap; gap: 6px 22px; }
+.kv { display:grid; min-width:0; }
+.kv .k { font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.kv .v { font-weight:700; font-size:1.05rem; font-variant-numeric: tabular-nums; }
+.kv .v.r { font-weight:400; font-size:.95rem; }
+.atk .use { margin:0; }
+.chip { display:inline-block; font-size:.68rem; font-weight:700; padding:1px 7px; border-radius:999px; background: var(--soft); color: var(--fg); vertical-align: 1px; }
+th.numh { text-align:right; } td.num { text-align:right; }
+.from { font-size:.85rem; color: var(--muted); }
+header > p, section > p, .callout p { max-width: 68ch; }
 details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
-summary { cursor:pointer; padding:12px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; list-style:none; }
+summary { cursor:pointer; padding:12px 14px; display:grid; grid-template-columns: minmax(0, 1fr) auto; align-items:start; gap:10px; list-style:none; }
 summary::-webkit-details-marker { display:none; }
-summary::after { content:"+"; margin-left:auto; font-weight:700; color:var(--muted); font-size:1.2rem; }
+summary .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
+summary::after { content:"+"; font-weight:700; color:var(--muted); font-size:1.2rem; line-height:1.2; }
 details[open] summary::after { content:"−"; }
 .sname { font-weight:700; font-size:1.02rem; }
 .smeta { font-size:.82rem; color:var(--muted); }
 .sbody { padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
 .facts { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:6px 14px; margin:0 0 10px; font-size:.88rem; }
 .facts dt { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; } .facts dd { margin:0; }
-.roll { background: var(--soft); border-left: 4px solid var(--accent); padding: 8px 10px; border-radius: 0 8px 8px 0; }
+.roll { background: var(--soft); padding: 8px 12px; border-radius: 8px; }
+.roll b { color: var(--accent); }
 .pill { display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
 .pill.conc { color: var(--conc); border-color: var(--conc); } .pill.rit { color: var(--accent); border-color: var(--accent); }
 .pill.type { color: var(--accent); border-color: var(--accent); }
@@ -224,7 +255,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 <section id="turn">
   <h2>Your turn, step by step</h2>
   <p class="muted">In a fight, on your turn you can <b>move</b> up to ${c.speed} feet, take <b>one Action</b>, and maybe <b>one Bonus Action</b> if something gives you one. Once per round you can also take a <b>Reaction</b>, even on other people's turns. Here's what usually works best for ${esc(c.name.split(' ')[0])}:</p>
-  <div class="card"><ol class="turn">${turn}</ol></div>
+  <dl class="card turn">${turn}</dl>
 </section>
 
 <section id="track">
@@ -241,7 +272,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 <section id="attacks">
   <h2>Attacks</h2>
   <p class="muted">"To hit" means roll a d20 and add that number. The DM tells you if it beats the target's Armor Class. If it hits, roll the damage. <b>Rolled a natural 20</b> (the die shows 20)? That's a <b>critical hit</b>: roll all the damage dice twice and add the bonus once.</p>
-  <div class="card scroll"><table><thead><tr><th>Attack</th><th>To hit</th><th>Damage</th><th>Range</th></tr></thead><tbody>${atkRows}</tbody></table></div>
+  <ul class="atks">${atkRows}</ul>
 </section>
 
 ${isCaster ? `<section id="spells">
@@ -278,8 +309,8 @@ ${c.forms ? `<section id="forms">
   <div class="card scroll"><table><thead><tr><th>Ability</th><th>Score</th><th>Mod</th><th>Save</th></tr></thead><tbody>${abilRows}</tbody></table>
   <p class="muted small" style="margin-top:8px">How these were built: ${esc(c.build)}</p></div>
   <h2 style="margin-top:24px">Skills</h2>
-  <p class="muted">When the DM says "make a Perception check", roll d20 + the number here. Skills in color are ones you're trained in.</p>
-  <div class="card scroll"><table><thead><tr><th>Skill</th><th>Roll</th><th>Why</th></tr></thead><tbody>${skillRows}</tbody></table></div>
+  <p class="muted">When the DM says "make a Perception check", roll d20 + the number here. Skills marked Trained or Expert get your proficiency bonus.</p>
+  <div class="card scroll"><table><thead><tr><th>Skill</th><th class="numh">Roll</th></tr></thead><tbody>${skillRows}</tbody></table></div>
 </section>
 
 <section id="gear">
