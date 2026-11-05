@@ -64,11 +64,29 @@ dl.turn { margin: 10px 0 0; display:grid; gap: 14px; }
 .chip { display:inline-block; font-size:.68rem; font-weight:700; padding:1px 7px; border-radius:999px; background: var(--soft); color: var(--fg); vertical-align: 1px; }
 th.numh { text-align:right; } td.num { text-align:right; }
 .from { font-size:.85rem; color: var(--muted); }
+.lvlgrp { margin-top: 18px; display:grid; gap: 8px; }
+.lvlhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap: 8px 16px; padding: 10px 0 6px; border-bottom: 2px solid var(--accent); }
+h3.lvl { font-family: var(--display); font-size: 1.25rem; margin:0; }
+.slotbox { display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+.fl { font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.spell { background:var(--panel); border:1px solid var(--line); border-radius:12px; min-width:0; }
+.spell > details { background: transparent; border:0; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; margin:0; }
+.spell > details > summary { padding: 8px 14px; }
+.more { font-size:.88rem; font-weight:700; color: var(--muted); }
+.shead { display:grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; align-items:center; padding: 12px 14px; }
+.freerow { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding: 0 14px 10px; }
+.box.sm span { width:24px; height:24px; border-radius:6px; }
+button.cast { font: inherit; font-weight:700; font-size:.95rem; padding: 8px 16px; border-radius: 10px; border: 0; background: var(--accent); color: var(--bg); cursor:pointer; min-height: 40px; }
+button.cast:active { transform: translateY(1px); }
+.castmsg { margin:0; padding: 0 14px; font-size:.88rem; font-weight:700; color: var(--accent); }
+.castmsg:empty { display:none; }
+.castmsg:not(:empty) { padding-bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { button.cast:active { transform:none; } }
 header > p, section > p, .callout p { max-width: 68ch; }
 details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
 summary { cursor:pointer; padding:12px 14px; display:grid; grid-template-columns: minmax(0, 1fr) auto; align-items:start; gap:10px; list-style:none; }
 summary::-webkit-details-marker { display:none; }
-summary .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
+summary .sh, .shead .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
 summary::after { content:"+"; font-weight:700; color:var(--muted); font-size:1.2rem; line-height:1.2; }
 details[open] summary::after { content:"−"; }
 .sname { font-weight:700; font-size:1.02rem; }
@@ -128,10 +146,10 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 
 <section id="track">
   <h2>Tracker</h2>
-  <p class="muted">Tap a box when you use something. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
+  <p class="muted">Tap a box when you use something. Spell slots are in the Spells section. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
   <div class="card">
     <div class="hpbox"><label for="hp"><b>Current HP</b> <span class="muted">(max 32)</span></label><input id="hp" type="number" inputmode="numeric" data-k="ajth:hp" value="32"><label for="thp"><b>Temporary HP</b></label><input id="thp" type="number" inputmode="numeric" data-k="ajth:thp" value="0"></div>
-    <div class="trk"><span class="tl">1st level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot1:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:3"><span></span></label></span></div><div class="trk"><span class="tl">2nd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot2:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:2"><span></span></label></span></div><div class="trk"><span class="tl">3rd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot3:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot3:1"><span></span></label></span></div><div class="trk"><span class="tl">Portent dice</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:por:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:por:1"><span></span></label></span></div><div class="trk"><span class="tl">Detect Magic (elf)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:dm:0"><span></span></label></span></div><div class="trk"><span class="tl">Misty Step (elf)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ms:0"><span></span></label></span></div><div class="trk"><span class="tl">Arcane Recovery</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ar:0"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d6) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:4"><span></span></label></span></div>
+    <div class="trk"><span class="tl">Portent dice</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:por:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:por:1"><span></span></label></span></div><div class="trk"><span class="tl">Arcane Recovery</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ar:0"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d6) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:4"><span></span></label></span></div>
     <div class="trk"><span class="tl">Death saves: successes</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ds:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:ds:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:ds:2"><span></span></label></span></div><div class="trk"><span class="tl">Death saves: failures</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:df:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:df:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:df:2"><span></span></label></span></div>
     <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
   </div>
@@ -151,108 +169,153 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
     <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 + 2) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
     <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
   </div>
-  <h4 class="lvl">Cantrips <span class="muted">(free, unlimited)</span></h4><details class="spell"><summary><span class="sh"><span class="sname">Fire Bolt</span><span class="smeta">Action · 120 feet</span></span></summary>
+  <p class="muted">Tap <b>Cast</b> to tick off a slot. Tap a ticked box to undo it.</p>
+  <div class="lvlgrp"><div class="lvlhead"><h3 class="lvl">Cantrips</h3><span class="fl">Free, no slots</span></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Fire Bolt</span><span class="smeta">Action · 120 feet</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
 <p>Hurl a bolt of fire at a creature or object. A flammable object that nobody is wearing or carrying catches fire.</p>
 <p class="roll"><b>What to roll:</b> To hit: d20 + 6 (spell attack). Damage: 2d10 Fire.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Mind Sliver</span><span class="smeta">Action · 60 feet</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Mind Sliver</span><span class="smeta">Action · 60 feet</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>Until the end of your next turn</dd></div></dl>
 <p>Drive a spike of psychic energy into a creature's mind. It makes an Intelligence saving throw. On a fail it takes damage and, the next time it makes a saving throw before the end of your next turn, it subtracts 1d4.</p>
 <p class="roll"><b>What to roll:</b> Target rolls an Intelligence save against DC 14. If it fails: 2d6 Psychic damage, and it rolls 1d4 and subtracts it from its next save.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Mage Hand</span><span class="smeta">Action · 30 feet</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Mage Hand</span><span class="smeta">Action · 30 feet</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
 <p>A floating, see-through hand appears. Casting it lets you use the hand right away, and on later turns you take the Magic action to use it again. It can pick up or move an object up to 10 pounds, open an unlocked door or container, take something out of an open container, or pour out a vial. You can move it up to 30 feet each time you use it. It cannot attack, use magic items, or go more than 30 feet from you.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll. Your DM may ask for a check for something delicate.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Minor Illusion</span><span class="smeta">Action · 30 feet</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Minor Illusion</span><span class="smeta">Action · 30 feet</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
 <p>Make a fake sound (anything from a whisper to a lion's roar) or a still image of an object, no bigger than a 5-foot cube (a crate, a door, a bush). Anything that touches the image passes right through it. A creature that takes an action to study it can make an Intelligence (Investigation) check against your spell save DC to realize it's fake.</p>
 <p class="roll"><b>What to roll:</b> Nothing for you to roll. Creatures that study it roll against your DC 14.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Prestidigitation</span><span class="smeta">Action · 10 feet</span><span class="pill src">High Elf</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Prestidigitation</span><span class="smeta">Action · 10 feet</span><span class="pill src">High Elf</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody"><p class="from"><b>Where it comes from:</b> High Elf</p>
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>10 feet</dd></div><div><dt>Lasts</dt><dd>Up to 1 hour</dd></div></dl>
 <p>Little magic tricks: a harmless sparkle, puff of wind, faint music or odd smell; light or snuff a candle; clean or dirty an object; chill, warm or flavor food; make a colored mark or symbol appear on something for an hour; or make a small, fake trinket appear in your hand until the end of your next turn. You can have up to three going at once.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll.</p>
 
-</div></details>
-  <h4 class="lvl">Always prepared <span class="muted">(free extras: they don't count against your list)</span></h4><details class="spell"><summary><span class="sh"><span class="sname">Detect Magic</span><span class="smeta">Action · Yourself</span><span class="pill conc">Concentration</span><span class="pill rit">Ritual</span><span class="pill src">1st level · High Elf</span></span></summary>
-<div class="sbody"><p class="from"><b>Where it comes from:</b> High Elf: once free per Long Rest</p>
-<dl class="facts"><div><dt>Casting time</dt><dd>Action, or 10 minutes longer as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself, 30 feet around you</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div></dl>
-<p>For 10 minutes you sense whether there is magic within 30 feet of you. If you sense some, you can take the Magic action to see a faint aura around anything magical you can see and learn which school of magic it is. Cast as a ritual, it takes 10 minutes longer and uses no spell slot.</p>
-<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
-
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Misty Step</span><span class="smeta">Bonus Action · Yourself</span><span class="pill src">2nd level · High Elf</span></span></summary>
-<div class="sbody"><p class="from"><b>Where it comes from:</b> High Elf: once free per Long Rest</p>
-<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
-<p>In a puff of silvery mist you teleport up to 30 feet to a spot you can see.</p>
-<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
-
-</div></details>
-  <h4 class="lvl" style="margin-top:22px;font-size:1.3rem">Prepared spells</h4>
-  <p class="muted">These 9 use your spell slots.</p>
-  <h4 class="lvl">1st level <span class="muted">(4 slots)</span></h4><details class="spell"><summary><span class="sh"><span class="sname">Mage Armor</span><span class="smeta">Action · Touch</span></span></summary>
+</div></details></div></div>
+  <div class="lvlgrp" data-level="1"><div class="lvlhead"><h3 class="lvl">1st level spells</h3><div class="slotbox"><span class="fl">4 slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot1:0" aria-label="slot1 1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:1" aria-label="slot1 2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:2" aria-label="slot1 3"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:3" aria-label="slot1 4"><span></span></label></span></div></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Mage Armor</span><span class="smeta">Action · Touch</span></div><button type="button" class="cast" data-level="1">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>8 hours</dd></div></dl>
 <p>Touch someone who isn't wearing armor. A protective magical force surrounds them. Their Armor Class becomes 13 + their Dexterity modifier for 8 hours.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll. Your AC becomes 16.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Shield</span><span class="smeta">Reaction · Yourself</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Shield</span><span class="smeta">Reaction · Yourself</span></div><button type="button" class="cast" data-level="1">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Reaction, which you take when an attack roll hits you or you are targeted by Magic Missile</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>Until the start of your next turn</dd></div></dl>
 <p>An invisible barrier pops up. You get +5 to your Armor Class until the start of your next turn, and that counts against the attack that triggered it. So if the DM says "a 16 hits you", you can cast Shield and suddenly it misses. You also take no damage from Magic Missile. You cast it after you learn the attack hits.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll. Add 5 to your AC.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Magic Missile</span><span class="smeta">Action · 120 feet</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Magic Missile</span><span class="smeta">Action · 120 feet</span></div><button type="button" class="cast" data-level="1">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
 <p>Three glowing darts fly out and ALWAYS hit, with no attack roll. Send all three at one creature or split them however you like.</p>
 <p class="roll"><b>What to roll:</b> Each dart does 1d4 + 1 Force damage. Three darts: roll 3d4 and add 3 if they all go to one target.</p>
 <p class="muted"><b>With a higher slot:</b> One extra dart for each slot level above 1.</p>
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Tasha's Hideous Laughter</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Tasha's Hideous Laughter</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></div><button type="button" class="cast" data-level="1">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
 <p>One creature you can see finds everything hilarious. It makes a Wisdom save. If it fails, it falls Prone and is Incapacitated (can't take actions) while it laughs, and it can't stand up. At the end of each of its turns, and every time it takes damage, it tries the save again (with advantage when it's because of damage). A success ends the spell.</p>
 <p class="roll"><b>What to roll:</b> Target rolls a Wisdom save against DC 14.</p>
 <p class="muted"><b>With a higher slot:</b> One extra creature for each slot level above 1.</p>
-</div></details><h4 class="lvl">2nd level <span class="muted">(3 slots)</span></h4><details class="spell"><summary><span class="sh"><span class="sname">Hold Person</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Detect Magic</span><span class="smeta">Action · Yourself</span><span class="pill conc">Concentration</span><span class="pill rit">Ritual</span><span class="pill src">High Elf</span></div><button type="button" class="cast" data-level="1" data-free="dm">Cast</button></div>
+<div class="freerow"><span class="fl">Free casts (used first)</span><span class="boxes"><label class="box sm"><input type="checkbox" data-k="ajth:dm:0" aria-label="dm 1"><span></span></label></span></div><p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> High Elf: once free per Long Rest</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action, or 10 minutes longer as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself, 30 feet around you</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div></dl>
+<p>For 10 minutes you sense whether there is magic within 30 feet of you. If you sense some, you can take the Magic action to see a faint aura around anything magical you can see and learn which school of magic it is. Cast as a ritual, it takes 10 minutes longer and uses no spell slot.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details></div></div><div class="lvlgrp" data-level="2"><div class="lvlhead"><h3 class="lvl">2nd level spells</h3><div class="slotbox"><span class="fl">3 slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot2:0" aria-label="slot2 1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:1" aria-label="slot2 2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:2" aria-label="slot2 3"><span></span></label></span></div></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Hold Person</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></div><button type="button" class="cast" data-level="2">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
 <p>Pick a Humanoid (a person: human, elf, goblin, bandit…) you can see. It makes a Wisdom save. If it fails, it is Paralyzed: it can't move, act or speak, and any attack that hits it from within 5 feet is automatically a critical hit (double damage dice). It tries the save again at the end of each of its turns.</p>
 <p class="roll"><b>What to roll:</b> Target rolls a Wisdom save against DC 14, then again at the end of each of its turns.</p>
 <p class="muted"><b>With a higher slot:</b> One extra Humanoid for each slot level above 2.</p>
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Mirror Image</span><span class="smeta">Action · Yourself</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Mirror Image</span><span class="smeta">Action · Yourself</span></div><button type="button" class="cast" data-level="2">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
 <p>Three illusion copies of you appear and shimmer around you. Not concentration. Every time an attack hits you, roll a d6 for each copy still left. If ANY of those dice shows 3 or higher, a copy gets hit instead of you and disappears. When all three copies are gone, the spell is over. It doesn't fool attackers that are blind or can sense without sight (blindsight, truesight).</p>
 <p class="roll"><b>What to roll:</b> When hit: roll 1d6 per remaining copy. Any 3+ means a copy takes the hit instead.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Invisibility</span><span class="smeta">Action · Touch</span><span class="pill conc">Concentration</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Invisibility</span><span class="smeta">Action · Touch</span><span class="pill conc">Concentration</span></div><button type="button" class="cast" data-level="2">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>1 hour (concentration)</dd></div></dl>
 <p>Touch a creature (or yourself). It becomes Invisible, along with what it's wearing and carrying, for up to 1 hour. It becomes visible again as soon as it attacks, deals damage, or casts a spell.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll.</p>
 <p class="muted"><b>With a higher slot:</b> One extra creature for each slot level above 2.</p>
-</div></details><h4 class="lvl">3rd level <span class="muted">(2 slots)</span></h4><details class="spell"><summary><span class="sh"><span class="sname">Hypnotic Pattern</span><span class="smeta">Action · 120 feet</span><span class="pill conc">Concentration</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Misty Step</span><span class="smeta">Bonus Action · Yourself</span><span class="pill src">High Elf</span></div><button type="button" class="cast" data-level="2" data-free="ms">Cast</button></div>
+<div class="freerow"><span class="fl">Free casts (used first)</span><span class="boxes"><label class="box sm"><input type="checkbox" data-k="ajth:ms:0" aria-label="ms 1"><span></span></label></span></div><p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> High Elf: once free per Long Rest</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>In a puff of silvery mist you teleport up to 30 feet to a spot you can see.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details></div></div><div class="lvlgrp" data-level="3"><div class="lvlhead"><h3 class="lvl">3rd level spells</h3><div class="slotbox"><span class="fl">2 slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot3:0" aria-label="slot3 1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot3:1" aria-label="slot3 2"><span></span></label></span></div></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Hypnotic Pattern</span><span class="smeta">Action · 120 feet</span><span class="pill conc">Concentration</span></div><button type="button" class="cast" data-level="3">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
 <p>A swirl of colors fills a 30-foot cube. Every creature that can see it makes a Wisdom save. If it fails, it is Charmed and Incapacitated, and its speed is 0: it just stands there staring. It snaps out of it if it takes damage or someone uses an action to shake it.</p>
 <p class="roll"><b>What to roll:</b> Each creature rolls a Wisdom save against DC 14.</p>
 
-</div></details><details class="spell"><summary><span class="sh"><span class="sname">Haste</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></span></summary>
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Haste</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></div><button type="button" class="cast" data-level="3">Cast</button></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">
 <dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
 <p>Pick a willing creature within 30 feet. For 1 minute its speed is doubled, it gets +2 AC, it has advantage on Dexterity saves, and it gets one extra action each turn. The extra action can only be used to Attack (one attack only), Dash, Disengage, Hide or Utilize. When the spell ends, the creature can't move or act until the end of its next turn.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll.</p>
 
-</div></details>
-  
+</div></details></div></div>
 </section>
 
 <section id="features">
@@ -340,6 +403,30 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
   boxes.forEach(function(b){ b.checked = get(b.dataset.k) === '1'; b.addEventListener('change', function(){ set(b.dataset.k, b.checked ? '1' : null); }); });
   var nums = document.querySelectorAll('input[type=number][data-k]');
   nums.forEach(function(n){ var v = get(n.dataset.k); if (v !== null) n.value = v; n.addEventListener('input', function(){ set(n.dataset.k, n.value); }); });
+  var slug = "ajth";
+  var ORD = ['', '1st', '2nd', '3rd'];
+  function take(key){
+    var list = document.querySelectorAll('input[data-k^="' + slug + ':' + key + ':"]');
+    for (var i = 0; i < list.length; i++) if (!list[i].checked) { list[i].checked = true; set(list[i].dataset.k, '1'); return true; }
+    return false;
+  }
+  document.querySelectorAll('button.cast').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.spell'), msg = card.querySelector('.castmsg');
+      var lvl = +btn.dataset.level, text = '';
+      if (btn.dataset.free && take(btn.dataset.free)) text = 'Used a free cast.';
+      else if (btn.dataset.freeonly) text = 'No free casts left for this one.';
+      else {
+        var used = 0;
+        for (var L = lvl; L <= 3 && !used; L++) if (take('slot' + L)) used = L;
+        if (!used) text = 'No ' + ORD[lvl] + '-level or higher slots left.';
+        else if (used === lvl) text = 'Used a ' + ORD[used] + '-level slot.';
+        else text = 'No ' + ORD[lvl] + '-level slots left, so this used a ' + ORD[used] + '-level slot.';
+      }
+      msg.textContent = text;
+      clearTimeout(msg._t); msg._t = setTimeout(function(){ msg.textContent = ''; }, 5000);
+    });
+  });
   document.getElementById('reset').addEventListener('click', function(){
     if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
     boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });

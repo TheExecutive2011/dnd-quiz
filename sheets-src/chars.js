@@ -54,7 +54,7 @@ module.exports = [
   cantripSrc: { 'Fire Bolt': 'Circle of the Land (Arid)', 'Mage Hand': 'Magic Initiate feat', 'Minor Illusion': 'Magic Initiate feat' },
   always: { 'Blur': 'Circle of the Land (Arid)', 'Burning Hands': 'Circle of the Land (Arid)', 'Fireball': 'Circle of the Land (Arid)', 'Speak with Animals': 'Druidic', 'Shield': 'Magic Initiate feat: cast once free per Long Rest' },
   prepared: ['Healing Word', 'Cure Wounds', 'Entangle', 'Goodberry', 'Barkskin', 'Hold Person', 'Spike Growth', 'Call Lightning', 'Dispel Magic'],
-  free: [{ key: 'mi', label: 'Shield (free cast)', count: 1 }],
+  free: [{ key: 'mi', label: 'Shield (free cast)', count: 1, spell: 'Shield' }],
   features: [
     ...DRUID_COMMON('Kender are Small, but that doesn\'t limit your animal forms.'),
     { name: 'Circle of the Land: circle spells', src: 'Druid subclass, level 3', type: 'Always on',
@@ -96,7 +96,7 @@ module.exports = [
   cantripSrc: { 'Light': 'Magic Initiate feat', 'Prestidigitation': 'Magic Initiate feat', 'Druidcraft': 'Lotusden Halfling (uses Wisdom)' },
   always: { 'Shield': 'Magic Initiate feat: cast once free per Long Rest', 'Entangle': { src: 'Lotusden Halfling: once free per Long Rest. Uses Wisdom, so the DC is 12', dc: 12 }, 'Spike Growth': { src: 'Lotusden Halfling: once free per Long Rest (uses Wisdom)', dc: 12 } },
   prepared: ['Mage Armor', 'Magic Missile', 'Sleep', 'Thunderwave', 'Misty Step', 'Web', 'Scorching Ray', 'Fireball', 'Counterspell'],
-  free: [{ key: 'mi', label: 'Shield (free cast)', count: 1 }, { key: 'ent', label: 'Entangle (halfling)', count: 1 }, { key: 'spk', label: 'Spike Growth (halfling)', count: 1 }],
+  free: [{ key: 'mi', label: 'Shield (free cast)', count: 1, spell: 'Shield' }, { key: 'ent', label: 'Entangle (halfling)', count: 1, spell: 'Entangle', freeOnly: true }, { key: 'spk', label: 'Spike Growth (halfling)', count: 1, spell: 'Spike Growth', freeOnly: true }],
   features: [
     ...WIZ_COMMON,
     { name: 'Evoker: Potent Cantrip', src: 'Wizard subclass, level 3', type: 'Always on',
@@ -140,7 +140,7 @@ module.exports = [
   cantripSrc: { 'Guidance': 'Circle of the Stars (Star Map)', 'Minor Illusion': 'Forest Gnome' },
   always: { 'Guiding Bolt': 'Circle of the Stars: 4 free casts per Long Rest', 'Speak with Animals': 'Druidic, and Forest Gnome: 3 free casts per Long Rest' },
   prepared: ['Cure Wounds', 'Healing Word', 'Thunderwave', 'Faerie Fire', 'Barkskin', 'Flaming Sphere', 'Lesser Restoration', 'Revivify', 'Conjure Animals'],
-  free: [{ key: 'gb', label: 'Guiding Bolt (free)', count: 4 }, { key: 'swa', label: 'Speak with Animals (gnome)', count: 3 }],
+  free: [{ key: 'gb', label: 'Guiding Bolt (free)', count: 4, spell: 'Guiding Bolt' }, { key: 'swa', label: 'Speak with Animals (gnome)', count: 3, spell: 'Speak with Animals' }],
   features: [
     ...DRUID_COMMON('Starry Form also spends a Wild Shape use.'),
     { name: 'Circle of the Stars: Star Map', src: 'Druid subclass, level 3', type: 'Always on', uses: 'Guiding Bolt: 4 free casts per Long Rest',
@@ -185,7 +185,7 @@ module.exports = [
   cantrips: [],
   always: { "Hunter's Mark": 'Favored Enemy: 3 free casts per Long Rest' },
   prepared: ['Cure Wounds', 'Goodberry', 'Longstrider', 'Speak with Animals', 'Aid', 'Pass without Trace'],
-  free: [{ key: 'hm', label: "Hunter's Mark (free)", count: 3 }, { key: 'insp', label: 'Heroic Inspiration', count: 1 }],
+  free: [{ key: 'hm', label: "Hunter's Mark (free)", count: 3, spell: "Hunter's Mark" }, { key: 'insp', label: 'Heroic Inspiration', count: 1 }],
   features: [
     { name: 'Spellcasting', src: 'Ranger, level 1', type: 'Rule',
       text: `<p>Your magic comes from <b>Wisdom</b>. You have <b>6 prepared spells</b> (plus Hunter's Mark for free). Your sprig of mistletoe is your focus. You have no cantrips. Your arrows do the work.</p>` },
@@ -239,7 +239,7 @@ module.exports = [
   cantripSrc: { 'Ray of Frost': 'Circle of the Sea' },
   always: { 'Fog Cloud': 'Circle of the Sea', 'Thunderwave': 'Circle of the Sea', 'Gust of Wind': 'Circle of the Sea', 'Lightning Bolt': 'Circle of the Sea', 'Water Breathing': 'Circle of the Sea', 'Speak with Animals': 'Druidic', 'Disguise Self': 'Deep Gnome: once free per Long Rest', 'Nondetection': 'Deep Gnome: once free per Long Rest, and no diamond dust needed that way' },
   prepared: ['Healing Word', 'Cure Wounds', 'Animal Friendship', 'Detect Magic', 'Barkskin', 'Moonbeam', 'Enhance Ability', 'Aura of Vitality', 'Sleet Storm'],
-  free: [{ key: 'ds', label: 'Disguise Self (gnome)', count: 1 }, { key: 'nd', label: 'Nondetection (gnome)', count: 1 }, { key: 'cam', label: 'Camouflage', count: 3 }],
+  free: [{ key: 'ds', label: 'Disguise Self (gnome)', count: 1, spell: 'Disguise Self' }, { key: 'nd', label: 'Nondetection (gnome)', count: 1, spell: 'Nondetection' }, { key: 'cam', label: 'Camouflage', count: 3 }],
   features: [
     ...DRUID_COMMON('Wrath of the Sea also spends a Wild Shape use.'),
     { name: 'Circle of the Sea: circle spells', src: 'Druid subclass, level 3', type: 'Always on',
@@ -280,7 +280,7 @@ module.exports = [
   cantripSrc: { 'Prestidigitation': 'High Elf' },
   always: { 'Detect Magic': 'High Elf: once free per Long Rest', 'Misty Step': 'High Elf: once free per Long Rest' },
   prepared: ['Mage Armor', 'Shield', 'Magic Missile', "Tasha's Hideous Laughter", 'Hold Person', 'Mirror Image', 'Invisibility', 'Hypnotic Pattern', 'Haste'],
-  free: [{ key: 'por', label: 'Portent dice', count: 2 }, { key: 'dm', label: 'Detect Magic (elf)', count: 1 }, { key: 'ms', label: 'Misty Step (elf)', count: 1 }],
+  free: [{ key: 'por', label: 'Portent dice', count: 2 }, { key: 'dm', label: 'Detect Magic (elf)', count: 1, spell: 'Detect Magic' }, { key: 'ms', label: 'Misty Step (elf)', count: 1, spell: 'Misty Step' }],
   features: [
     ...WIZ_COMMON,
     { name: 'Diviner: Portent', src: 'Wizard subclass, level 3', type: 'No action', uses: '2 dice, rerolled every Long Rest',

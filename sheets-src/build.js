@@ -56,7 +56,13 @@ const LVL = ['Cantrip', '1st level', '2nd level', '3rd level'];
 
 function fill(t, v) { return t.replace(/\{(\w+)\}/g, (_, k) => v[k] !== undefined ? v[k] : `{${k}}`); }
 
-function spellCard(name, c, tag, override, fullSrc) {
+function boxes(slug, key, count, cls) {
+  let h = '';
+  for (let i = 0; i < count; i++) h += `<label class="box${cls ? ' ' + cls : ''}"><input type="checkbox" data-k="${slug}:${key}:${i}" aria-label="${key} ${i + 1}"><span></span></label>`;
+  return h;
+}
+
+function spellCard(name, c, tag, override, fullSrc, free) {
   const s = SPELLS[name];
   if (!s) throw new Error('missing spell ' + name);
   const m = mod(c.abilities[c.castAbility]);
@@ -64,13 +70,18 @@ function spellCard(name, c, tag, override, fullSrc) {
   const atk = (override && override.atk) || PROF + m;
   const v = { dc, atk: atk, mod: m, mageArmor: c.mageArmor };
   const flags = [s.conc ? '<span class="pill conc">Concentration</span>' : '', s.ritual ? '<span class="pill rit">Ritual</span>' : '', tag ? `<span class="pill src">${esc(tag)}</span>` : ''].join('');
-  return `<details class="spell"><summary><span class="sh"><span class="sname">${esc(name)}</span><span class="smeta">${s.time.split(',')[0]} · ${esc(s.range.split(',')[0])}</span>${flags}</span></summary>
+  const cast = s.lvl > 0 ? `<button type="button" class="cast" data-level="${s.lvl}"${free ? ` data-free="${free.key}"` : ''}${free && free.freeOnly ? ' data-freeonly="1"' : ''}>Cast</button>` : '';
+  const freeRow = free ? `<div class="freerow"><span class="fl">Free casts${free.freeOnly ? '' : ' (used first)'}</span><span class="boxes">${boxes(c.slug, free.key, free.count, 'sm')}</span></div>` : '';
+  return `<div class="spell">
+<div class="shead"><div class="sh"><span class="sname">${esc(name)}</span><span class="smeta">${s.time.split(',')[0]} · ${esc(s.range.split(',')[0])}</span>${flags}</div>${cast}</div>
+${freeRow}<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
 <div class="sbody">${fullSrc ? `<p class="from"><b>Where it comes from:</b> ${esc(fullSrc)}</p>` : ''}
-<dl class="facts"><div><dt>Casting time</dt><dd>${esc(s.time)}</dd></div><div><dt>Range</dt><dd>${esc(s.range)}</dd></div><div><dt>Lasts</dt><dd>${esc(s.dur)}${s.conc ? ' (concentration)' : ''}</dd></div>${s.cost ? `<div><dt>Needs</dt><dd>${esc(s.cost)}</dd></div>` : ''}</dl>
+<dl class="facts"><div><dt>Casting time</dt><dd>${esc(s.time)}</dd></div><div><dt>Range</dt><dd>${esc(s.range)}</dd></div><div><dt>Lasts</dt><dd>${esc(s.dur)}${s.conc ? ' (concentration)' : ''}</dd></div></dl>
 <p>${fill(s.what, v)}</p>
 <p class="roll"><b>What to roll:</b> ${fill(s.roll, v)}</p>
 ${s.up ? `<p class="muted"><b>With a higher slot:</b> ${s.up}</p>` : ''}
-</div></details>`;
+</div></details></div>`;
 }
 
 function tracker(key, label, count, slug, note) {
@@ -98,22 +109,21 @@ function page(c) {
     return `<tr><td><b>${AB[k]}</b><div class="use">${AB_USE[k]}</div></td><td class="num">${c.abilities[k]}</td><td class="num">${sg(m[k])}</td><td class="num ${c.saves.includes(k) ? 'hi' : ''}">${sg(sv)}${c.saves.includes(k) ? '<span class="dot" title="proficient">●</span>' : ''}</td></tr>`;
   }).join('');
   const isCaster = c.prepared && c.prepared.length;
-  const slotLv = c.slots.map((n, i) => tracker('slot' + (i + 1), `${LVL[i + 1]} slots`, n, c.slug)).join('');
-  const freeT = (c.free || []).map((f) => tracker(f.key, f.label, f.count, c.slug)).join('');
+  const freeBy = {}; (c.free || []).forEach((f) => { if (f.spell) freeBy[f.spell] = f; });
+  const freeT = (c.free || []).filter((f) => !f.spell).map((f) => tracker(f.key, f.label, f.count, c.slug)).join('');
   const featT = c.features.filter((f) => f.track).map((f) => tracker(f.track.key, f.track.label, f.track.count, c.slug)).join('');
   const hd = tracker('hd', `Hit Dice (d${c.hitDie})`, 5, c.slug, 'spend on a Short Rest');
   const short = (t) => t.split(/[:(]/)[0].trim();
   const cantrips = (c.cantrips || []).map((n) => { const src = (c.cantripSrc || {})[n]; return spellCard(n, c, src && short(src), null, src); }).join('');
-  const always = Object.entries(c.always || {}).map(([n, v]) => {
-    const o = typeof v === 'string' ? { src: v } : v;
-    return { n, o, l: SPELLS[n].lvl };
-  }).sort((a, b) => a.l - b.l).map(({ n, o }) => spellCard(n, c, LVL[SPELLS[n].lvl] + ' · ' + short(o.src), o, o.src)).join('');
+  const extra = Object.entries(c.always || {}).map(([n, v]) => ({ n, o: typeof v === 'string' ? { src: v } : v }));
   const byLvl = [1, 2, 3].map((l) => {
+    const nSlots = c.slots[l - 1] || 0;
+    const ex = extra.filter((e) => SPELLS[e.n].lvl === l);
     const list = c.prepared.filter((n) => SPELLS[n].lvl === l);
-    if (!list.length) return '';
-    return `<h4 class="lvl">${LVL[l]} <span class="muted">(${c.slots[l - 1] || 0} slots)</span></h4>` + list.map((n) => spellCard(n, c)).join('');
+    if (!nSlots && !ex.length && !list.length) return '';
+    const cards = list.map((n) => spellCard(n, c, null, null, null, freeBy[n])).join('') + ex.map((e) => spellCard(e.n, c, short(e.o.src), e.o, e.o.src, freeBy[e.n])).join('');
+    return `<div class="lvlgrp" data-level="${l}"><div class="lvlhead"><h3 class="lvl">${LVL[l]} spells</h3><div class="slotbox"><span class="fl">${nSlots} slots</span><span class="boxes">${boxes(c.slug, 'slot' + l, nSlots)}</span></div></div>${cards}</div>`;
   }).join('');
-  const book = (c.spellbookOnly || []).map((n) => spellCard(n, c, LVL[SPELLS[n].lvl] + ' · in spellbook')).join('');
   const forms = (c.forms || []).map((f) => { const b = FORMS[f]; return `<div class="form"><h4>${f} <span class="muted">${b.size}</span></h4><p><b>AC</b> ${b.ac} · <b>Speed</b> ${b.speed}</p><p>${b.atk}</p><p class="muted">${b.notes}</p></div>`; }).join('');
   const feats = c.features.map((f) => `<details class="feat"><summary><span class="sh"><span class="sname">${esc(f.name)}</span><span class="pill type">${esc(f.type)}</span></span></summary><div class="sbody"><p class="muted small">${esc(f.src)}${f.uses ? ' · ' + esc(f.uses) : ''}</p>${f.text}</div></details>`).join('');
   const atkRows = c.attacks.map((a) => {
@@ -189,11 +199,29 @@ dl.turn { margin: 10px 0 0; display:grid; gap: 14px; }
 .chip { display:inline-block; font-size:.68rem; font-weight:700; padding:1px 7px; border-radius:999px; background: var(--soft); color: var(--fg); vertical-align: 1px; }
 th.numh { text-align:right; } td.num { text-align:right; }
 .from { font-size:.85rem; color: var(--muted); }
+.lvlgrp { margin-top: 18px; display:grid; gap: 8px; }
+.lvlhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap: 8px 16px; padding: 10px 0 6px; border-bottom: 2px solid var(--accent); }
+h3.lvl { font-family: var(--display); font-size: 1.25rem; margin:0; }
+.slotbox { display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+.fl { font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.spell { background:var(--panel); border:1px solid var(--line); border-radius:12px; min-width:0; }
+.spell > details { background: transparent; border:0; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; margin:0; }
+.spell > details > summary { padding: 8px 14px; }
+.more { font-size:.88rem; font-weight:700; color: var(--muted); }
+.shead { display:grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; align-items:center; padding: 12px 14px; }
+.freerow { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding: 0 14px 10px; }
+.box.sm span { width:24px; height:24px; border-radius:6px; }
+button.cast { font: inherit; font-weight:700; font-size:.95rem; padding: 8px 16px; border-radius: 10px; border: 0; background: var(--accent); color: var(--bg); cursor:pointer; min-height: 40px; }
+button.cast:active { transform: translateY(1px); }
+.castmsg { margin:0; padding: 0 14px; font-size:.88rem; font-weight:700; color: var(--accent); }
+.castmsg:empty { display:none; }
+.castmsg:not(:empty) { padding-bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { button.cast:active { transform:none; } }
 header > p, section > p, .callout p { max-width: 68ch; }
 details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
 summary { cursor:pointer; padding:12px 14px; display:grid; grid-template-columns: minmax(0, 1fr) auto; align-items:start; gap:10px; list-style:none; }
 summary::-webkit-details-marker { display:none; }
-summary .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
+summary .sh, .shead .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
 summary::after { content:"+"; font-weight:700; color:var(--muted); font-size:1.2rem; line-height:1.2; }
 details[open] summary::after { content:"−"; }
 .sname { font-weight:700; font-size:1.02rem; }
@@ -253,10 +281,10 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 
 <section id="track">
   <h2>Tracker</h2>
-  <p class="muted">Tap a box when you use something. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
+  <p class="muted">Tap a box when you use something. Spell slots are in the Spells section. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
   <div class="card">
     <div class="hpbox"><label for="hp"><b>Current HP</b> <span class="muted">(max ${c.hp})</span></label><input id="hp" type="number" inputmode="numeric" data-k="${c.slug}:hp" value="${c.hp}"><label for="thp"><b>Temporary HP</b></label><input id="thp" type="number" inputmode="numeric" data-k="${c.slug}:thp" value="0"></div>
-    ${isCaster ? slotLv : ''}${freeT}${featT}${hd}
+    ${freeT}${featT}${hd}
     ${tracker('ds', 'Death saves: successes', 3, c.slug)}${tracker('df', 'Death saves: failures', 3, c.slug)}
     <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
   </div>
@@ -276,12 +304,9 @@ ${isCaster ? `<section id="spells">
     <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 ${sg(m.con + (c.saves.includes('con') ? PROF : 0)).replace('+', '+ ')}) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
     <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
   </div>
-  ${cantrips ? `<h4 class="lvl">Cantrips <span class="muted">(free, unlimited)</span></h4>${cantrips}` : ''}
-  ${always ? `<h4 class="lvl">Always prepared <span class="muted">(free extras: they don't count against your list)</span></h4>${always}` : ''}
-  <h4 class="lvl" style="margin-top:22px;font-size:1.3rem">Prepared spells</h4>
-  <p class="muted">These ${c.prepared.length} use your spell slots.</p>
+  <p class="muted">Tap <b>Cast</b> to tick off a slot. Tap a ticked box to undo it.</p>
+  ${cantrips ? `<div class="lvlgrp"><div class="lvlhead"><h3 class="lvl">Cantrips</h3><span class="fl">Free, no slots</span></div>${cantrips}</div>` : ''}
   ${byLvl}
-  ${book ? `<h4 class="lvl">Also in your spellbook <span class="muted">(not prepared today: swap them in after a rest, or cast rituals)</span></h4>${book}` : ''}
 </section>` : ''}
 
 <section id="features">
@@ -373,6 +398,30 @@ ${c.forms ? `<section id="forms">
   boxes.forEach(function(b){ b.checked = get(b.dataset.k) === '1'; b.addEventListener('change', function(){ set(b.dataset.k, b.checked ? '1' : null); }); });
   var nums = document.querySelectorAll('input[type=number][data-k]');
   nums.forEach(function(n){ var v = get(n.dataset.k); if (v !== null) n.value = v; n.addEventListener('input', function(){ set(n.dataset.k, n.value); }); });
+  var slug = ${JSON.stringify(c.slug)};
+  var ORD = ['', '1st', '2nd', '3rd'];
+  function take(key){
+    var list = document.querySelectorAll('input[data-k^="' + slug + ':' + key + ':"]');
+    for (var i = 0; i < list.length; i++) if (!list[i].checked) { list[i].checked = true; set(list[i].dataset.k, '1'); return true; }
+    return false;
+  }
+  document.querySelectorAll('button.cast').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.spell'), msg = card.querySelector('.castmsg');
+      var lvl = +btn.dataset.level, text = '';
+      if (btn.dataset.free && take(btn.dataset.free)) text = 'Used a free cast.';
+      else if (btn.dataset.freeonly) text = 'No free casts left for this one.';
+      else {
+        var used = 0;
+        for (var L = lvl; L <= 3 && !used; L++) if (take('slot' + L)) used = L;
+        if (!used) text = 'No ' + ORD[lvl] + '-level or higher slots left.';
+        else if (used === lvl) text = 'Used a ' + ORD[used] + '-level slot.';
+        else text = 'No ' + ORD[lvl] + '-level slots left, so this used a ' + ORD[used] + '-level slot.';
+      }
+      msg.textContent = text;
+      clearTimeout(msg._t); msg._t = setTimeout(function(){ msg.textContent = ''; }, 5000);
+    });
+  });
   document.getElementById('reset').addEventListener('click', function(){
     if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
     boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });
