@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg">
+<title>AJTH · Character Sheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,50&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:#7a4aa8; --soft:#f4f1ea; --conc:#8a5a00; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding:0 max(16px, env(safe-area-inset-right)) 80px max(16px, env(safe-area-inset-left)); }
+.wrap { max-width: 820px; margin: 0 auto; }
+h1,h2,h3 { font-family:var(--display); margin:0; text-wrap:balance; }
+h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); line-height:1.05; }
+h2 { font-size: 1.5rem; margin-bottom: 4px; }
+h4 { margin: 0; font-size: 1rem; }
+p { margin: 0 0 8px; } p:last-child { margin-bottom: 0; }
+ul { margin: 4px 0 8px; padding-left: 20px; } li { margin-bottom: 6px; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+header { padding: 32px 0 12px; border-bottom: 4px solid var(--accent); margin-bottom: 8px; }
+.eyebrow { font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.line { font-weight: 700; color: var(--accent); margin-top: 4px; }
+nav { position: sticky; top: 0; z-index: 5; background: var(--bg); display:flex; gap:6px; overflow-x:auto; padding: 10px 0; border-bottom: 1px solid var(--line); }
+nav a { flex:none; font-size:.85rem; font-weight:700; color:var(--fg); text-decoration:none; padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:var(--panel); }
+section { margin-top: 32px; scroll-margin-top: 64px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:10px; }
+.stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:8px; margin-top: 14px; }
+.stat { background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:12px; padding:10px 12px; }
+.stat .k { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.stat .v { font-family:var(--display); font-size:1.8rem; font-weight:700; line-height:1.1; }
+.stat .n { font-size:.8rem; color:var(--muted); line-height:1.3; }
+table { width:100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align: top; }
+th { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+td.num { font-variant-numeric: tabular-nums; font-weight:700; white-space:nowrap; font-size:1.05rem; }
+td.hi { color: var(--accent); }
+.dot { font-size:.6rem; margin-left:4px; vertical-align: 2px; }
+tr.prof td:first-child b { color: var(--accent); }
+.use { font-size:.83rem; color:var(--muted); line-height:1.35; margin-top:2px; }
+.scroll { overflow-x:auto; }
+ol.turn { padding-left: 22px; margin: 0; } ol.turn li { margin-bottom: 10px; }
+details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
+summary { cursor:pointer; padding:12px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+summary::after { content:"+"; margin-left:auto; font-weight:700; color:var(--muted); font-size:1.2rem; }
+details[open] summary::after { content:"−"; }
+.sname { font-weight:700; font-size:1.02rem; }
+.smeta { font-size:.82rem; color:var(--muted); }
+.sbody { padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.facts { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:6px 14px; margin:0 0 10px; font-size:.88rem; }
+.facts dt { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; } .facts dd { margin:0; }
+.roll { background: var(--soft); border-left: 4px solid var(--accent); padding: 8px 10px; border-radius: 0 8px 8px 0; }
+.pill { display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+.pill.conc { color: var(--conc); border-color: var(--conc); } .pill.rit { color: var(--accent); border-color: var(--accent); }
+.pill.type { color: var(--accent); border-color: var(--accent); }
+h4.lvl { margin-top: 18px; font-family: var(--display); font-size: 1.15rem; }
+.callout { background: var(--soft); border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+.forms { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:8px; margin-top:8px; }
+.form { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; font-size:.92rem; }
+.form h4 { font-family: var(--display); font-size: 1.1rem; margin-bottom: 4px; }
+.trk { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); flex-wrap: wrap; }
+.trk:last-child { border-bottom: 0; }
+.boxes { display:flex; gap:6px; flex-wrap: wrap; }
+.box input { position:absolute; opacity:0; width:1px; height:1px; }
+.box span { display:block; width:30px; height:30px; border:2px solid var(--accent); border-radius:8px; cursor:pointer; }
+.box input:checked + span { background: var(--accent); }
+.box input:focus-visible + span { outline: 3px solid var(--fg); outline-offset: 2px; }
+button.reset { font: inherit; font-weight:700; padding:10px 14px; border-radius:10px; border:1px solid var(--accent); background:var(--panel); color:var(--fg); cursor:pointer; margin-top:10px; }
+.hpbox { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+.hpbox input { font: inherit; font-size:1.4rem; font-weight:700; width: 90px; padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color: var(--fg); }
+footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
+@media print { nav, button.reset { display:none; } details { break-inside: avoid; } details:not([open]) .sbody { display:block; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Character sheet · Level 5</p>
+  <h1>AJTH</h1>
+  <p class="line">High Elf Wizard · Diviner · Entertainer</p>
+  <p style="margin-top:8px">A flamboyant elf performer who sees the future. Your job: control the fight (freeze enemies, speed up friends), and bend luck with your Portent dice.</p>
+  <div class="stats">
+    <div class="stat"><div class="k">Armor Class</div><div class="v">13</div><div class="n">No armor: 10 + Dex (+3). With Mage Armor (cast it every morning!): 16. With Shield: +5 more.</div></div>
+    <div class="stat"><div class="k">Hit Points</div><div class="v">32</div><div class="n">Maximum. Hit Dice: 5 × d6</div></div>
+    <div class="stat"><div class="k">Speed</div><div class="v">30 ft</div><div class="n">Medium · Darkvision 60 ft</div></div>
+    <div class="stat"><div class="k">Initiative</div><div class="v">+3</div><div class="n">Dex +3</div></div>
+    <div class="stat"><div class="k">Proficiency</div><div class="v">+3</div><div class="n">Added to things you're trained in</div></div>
+    <div class="stat"><div class="k">Passive Perception</div><div class="v">14</div><div class="n">What you notice without rolling</div></div>
+    <div class="stat"><div class="k">Spell Save DC</div><div class="v">14</div><div class="n">What enemies roll against</div></div>
+    <div class="stat"><div class="k">Spell Attack</div><div class="v">+6</div><div class="n">Add to d20 for spell attacks</div></div>
+  </div>
+</header>
+<nav aria-label="Jump to"><a href="#turn">Your turn</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a><a href="#spells">Spells</a><a href="#features">Abilities</a><a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+
+<section id="how">
+  <div class="callout">
+    <p><b>How to read this page.</b> When the DM asks you to roll, it's almost always a <b>d20</b> (the 20-sided die) plus a number from this page. "d20 + 7" means roll the d20 and add 7. Tell the DM the total. Damage is written like <b>2d10 + 4</b>: roll two 10-sided dice, add them up, then add 4. Tap any spell or ability below to open the full explanation. There's a <a href="#rules">rules help</a> section at the bottom.</p>
+  </div>
+</section>
+
+<section id="turn">
+  <h2>Your turn, step by step</h2>
+  <p class="muted">In a fight, on your turn you can <b>move</b> up to 30 feet, take <b>one Action</b>, and maybe <b>one Bonus Action</b> if something gives you one. Once per round you can also take a <b>Reaction</b>, even on other people's turns. Here's what usually works best for AJTH:</p>
+  <div class="card"><ol class="turn"><li><b>Every morning.</b> Roll your two <b>Portent</b> dice and write them down. Cast <b>Mage Armor</b> on yourself (AC 16).</li><li><b>After every rest.</b> Play your lute: up to 3 friends get <b>Heroic Inspiration</b> (Musician).</li><li><b>First turn of a fight.</b> Lots of enemies? <b>Hypnotic Pattern</b> to freeze as many as you can. Tough fight? <b>Haste</b> on Caelan (two extra arrows a turn). One scary enemy? <b>Hold Person</b> (people only) or <b>Tasha's Hideous Laughter</b>.</li><li><b>Every turn after that.</b> <b>Fire Bolt</b> (d20 + 6, 2d10 fire) or <b>Mind Sliver</b> (Int save DC 14, 2d6 psychic, and its next save is worse). Protect your concentration.</li><li><b>Big moment (a save, a key attack).</b> Use a <b>Portent</b> die: replace any d20 roll you can see (yours, a friend's or an enemy's) with your saved number. You must say so <b>before</b> the roll.</li><li><b>When something hits you.</b> <b>Shield</b> (Reaction): +5 AC. Or cast <b>Mirror Image</b> ahead of time. Something next to you? <b>Misty Step</b> away (once free).</li></ol></div>
+</section>
+
+<section id="track">
+  <h2>Tracker</h2>
+  <p class="muted">Tap a box when you use something. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
+  <div class="card">
+    <div class="hpbox"><label for="hp"><b>Current HP</b> <span class="muted">(max 32)</span></label><input id="hp" type="number" inputmode="numeric" data-k="ajth:hp" value="32"><label for="thp"><b>Temporary HP</b></label><input id="thp" type="number" inputmode="numeric" data-k="ajth:thp" value="0"></div>
+    <div class="trk"><span class="tl">1st level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot1:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot1:3"><span></span></label></span></div><div class="trk"><span class="tl">2nd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot2:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot2:2"><span></span></label></span></div><div class="trk"><span class="tl">3rd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:slot3:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:slot3:1"><span></span></label></span></div><div class="trk"><span class="tl">Portent dice</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:por:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:por:1"><span></span></label></span></div><div class="trk"><span class="tl">Detect Magic (elf)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:dm:0"><span></span></label></span></div><div class="trk"><span class="tl">Misty Step (elf)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ms:0"><span></span></label></span></div><div class="trk"><span class="tl">Arcane Recovery</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ar:0"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d6) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:hd:4"><span></span></label></span></div>
+    <div class="trk"><span class="tl">Death saves: successes</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:ds:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:ds:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:ds:2"><span></span></label></span></div><div class="trk"><span class="tl">Death saves: failures</span><span class="boxes"><label class="box"><input type="checkbox" data-k="ajth:df:0"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:df:1"><span></span></label><label class="box"><input type="checkbox" data-k="ajth:df:2"><span></span></label></span></div>
+    <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
+  </div>
+</section>
+
+<section id="attacks">
+  <h2>Attacks</h2>
+  <p class="muted">"To hit" means roll a d20 and add that number. The DM tells you if it beats the target's Armor Class. If it hits, roll the damage. <b>Rolled a natural 20</b> (the die shows 20)? That's a <b>critical hit</b>: roll all the damage dice twice and add the bonus once.</p>
+  <div class="card scroll"><table><thead><tr><th>Attack</th><th>To hit</th><th>Damage</th><th>Range</th></tr></thead><tbody><tr><td><b>Fire Bolt (cantrip)</b><div class="use">Main attack. Unlimited.</div></td><td class="num">d20 + 6</td><td>2d10 Fire</td><td class="small">120 ft</td></tr><tr><td><b>Mind Sliver (cantrip)</b><div class="use">Use right before Hold Person or Hypnotic Pattern.</div></td><td class="num">Save</td><td>Int save DC 14, fail: 2d6 Psychic and −1d4 on its next save</td><td class="small">60 ft</td></tr><tr><td><b>Dagger</b><div class="use">You have two. Decent backup thanks to your Dex.</div></td><td class="num">d20 + 6</td><td>1d4 + 3 Piercing</td><td class="small">Melee, or thrown 20/60 ft</td></tr></tbody></table></div>
+</section>
+
+<section id="spells">
+  <h2>Spells</h2>
+  <div class="callout">
+    <p><b>How your magic works.</b> <b>Cantrips</b> are free: cast them as often as you like. Every other spell uses up a <b>spell slot</b> of its level or higher. You have <b>4 1st level, 3 2nd level, 2 3rd level</b> slots, and you get them all back after a Long Rest. Casting a spell with a higher slot than needed usually makes it stronger.</p>
+    <p><b>Spell attack:</b> d20 + 6. <b>Spell save DC:</b> 14. When a spell says "save", the <i>target</i> rolls and needs 14 or more to resist.</p>
+    <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 + 2) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
+    <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
+  </div>
+  <h4 class="lvl">Cantrips <span class="muted">(free, unlimited)</span></h4><details class="spell"><summary><span class="sname">Fire Bolt</span><span class="smeta">Action · 120 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Hurl a bolt of fire at a creature or object. A flammable object that nobody is wearing or carrying catches fire. This is your long-range "always available" attack.</p>
+<p class="roll"><b>What to roll:</b> To hit: d20 + 6 (spell attack). Damage: 2d10 Fire.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Mind Sliver</span><span class="smeta">Action · 60 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>Until the end of your next turn</dd></div></dl>
+<p>Drive a spike of psychic energy into a creature's mind. It makes an Intelligence saving throw. On a fail it takes damage and, the next time it makes a saving throw before the end of your next turn, it subtracts 1d4. Cast this first, then follow up with a spell that needs a saving throw (yours or a friend's).</p>
+<p class="roll"><b>What to roll:</b> Target rolls an Intelligence save against DC 14. If it fails: 2d6 Psychic damage, and it rolls 1d4 and subtracts it from its next save.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Mage Hand</span><span class="smeta">Action · 30 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
+<p>A floating, see-through hand appears. Casting it lets you use the hand right away, and on later turns you take the Magic action to use it again. It can pick up or move an object up to 10 pounds, open an unlocked door or container, take something out of an open container, or pour out a vial. You can move it up to 30 feet each time you use it. It cannot attack, use magic items, or go more than 30 feet from you.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. Your DM may ask for a check for something delicate.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Minor Illusion</span><span class="smeta">Action · 30 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
+<p>Make a fake sound (anything from a whisper to a lion's roar) or a still image of an object, no bigger than a 5-foot cube (a crate, a door, a bush). Anything that touches the image passes right through it. A creature that takes an action to study it can make an Intelligence (Investigation) check against your spell save DC to realize it's fake. Great for hiding behind a "crate" or making guards chase a noise.</p>
+<p class="roll"><b>What to roll:</b> Nothing for you to roll. Creatures that study it roll against your DC 14.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Prestidigitation</span><span class="smeta">Action · 10 feet</span><span class="pill src">High Elf (you can swap it for another wizard cantrip after a Long Rest)</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>10 feet</dd></div><div><dt>Lasts</dt><dd>Up to 1 hour</dd></div></dl>
+<p>Little magic tricks: a harmless sparkle, puff of wind, faint music or odd smell; light or snuff a candle; clean or dirty an object; chill, warm or flavor food; make a colored mark or symbol appear on something for an hour; or make a small, fake trinket appear in your hand until the end of your next turn. You can have up to three going at once.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details>
+  <h4 class="lvl">Always prepared <span class="muted">(free extras: they don't count against your list)</span></h4><details class="spell"><summary><span class="sname">Detect Magic</span><span class="smeta">Action · Yourself</span><span class="pill conc">Concentration</span><span class="pill rit">Ritual</span><span class="pill src">1st level · High Elf: once free per Long Rest</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action, or 10 minutes longer as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself, 30 feet around you</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div></dl>
+<p>For 10 minutes you sense whether there is magic within 30 feet of you. If you sense some, you can take the Magic action to see a faint aura around anything magical you can see and learn which school of magic it is. Cast it as a ritual (take 10 extra minutes) when you are not in a hurry and it costs no spell slot.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Misty Step</span><span class="smeta">Bonus Action · Yourself</span><span class="pill src">2nd level · High Elf: once free per Long Rest</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>In a puff of silvery mist you teleport up to 30 feet to a spot you can see. Use it to escape a monster that is next to you (no Opportunity Attack), cross a gap, or get to a high ledge. Because it's a Bonus Action, you can still cast a cantrip with your Action on the same turn.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details>
+  <h4 class="lvl" style="margin-top:22px;font-size:1.3rem">Prepared spells</h4>
+  <p class="muted">These 9 use your spell slots.</p>
+  <h4 class="lvl">1st level <span class="muted">(4 slots)</span></h4><details class="spell"><summary><span class="sname">Mage Armor</span><span class="smeta">Action · Touch</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>8 hours</dd></div></dl>
+<p>Touch someone who isn't wearing armor. A protective magical force surrounds them. Their Armor Class becomes 13 + their Dexterity modifier for 8 hours. Cast it on yourself at the start of every adventuring day.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. Your AC becomes 16.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Shield</span><span class="smeta">Reaction · Yourself</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Reaction, which you take when an attack roll hits you or you are targeted by Magic Missile</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>Until the start of your next turn</dd></div></dl>
+<p>An invisible barrier pops up. You get +5 to your Armor Class until the start of your next turn, and that counts against the attack that triggered it. So if the DM says "a 16 hits you", you can cast Shield and suddenly it misses. You also take no damage from Magic Missile. Ask your DM to tell you the attack total so you can decide.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. Add 5 to your AC.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Magic Missile</span><span class="smeta">Action · 120 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Three glowing darts fly out and ALWAYS hit, with no attack roll. Send all three at one creature or split them however you like. Perfect for finishing off a wounded enemy or hitting something hard to hit.</p>
+<p class="roll"><b>What to roll:</b> Each dart does 1d4 + 1 Force damage. Three darts: roll 3d4 and add 3 if they all go to one target.</p>
+<p class="muted"><b>With a higher slot:</b> One extra dart for each slot level above 1.</p>
+</div></details><details class="spell"><summary><span class="sname">Tasha's Hideous Laughter</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>One creature you can see finds everything hilarious. It makes a Wisdom save. If it fails, it falls Prone and is Incapacitated (can't take actions) while it laughs, and it can't stand up. At the end of each of its turns, and every time it takes damage, it tries the save again (with advantage when it's because of damage). A success ends the spell.</p>
+<p class="roll"><b>What to roll:</b> Target rolls a Wisdom save against DC 14.</p>
+<p class="muted"><b>With a higher slot:</b> One extra creature for each slot level above 1.</p>
+</div></details><h4 class="lvl">2nd level <span class="muted">(3 slots)</span></h4><details class="spell"><summary><span class="sname">Hold Person</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Pick a Humanoid (a person: human, elf, goblin, bandit…) you can see. It makes a Wisdom save. If it fails, it is Paralyzed: it can't move, act or speak, and any attack that hits it from within 5 feet is automatically a critical hit (double damage dice). It tries the save again at the end of each of its turns. Tell your friends to rush it.</p>
+<p class="roll"><b>What to roll:</b> Target rolls a Wisdom save against DC 14, then again at the end of each of its turns.</p>
+<p class="muted"><b>With a higher slot:</b> One extra Humanoid for each slot level above 2.</p>
+</div></details><details class="spell"><summary><span class="sname">Mirror Image</span><span class="smeta">Action · Yourself</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
+<p>Three illusion copies of you appear and shimmer around you. Not concentration. Every time an attack hits you, roll a d6 for each copy still left. If ANY of those dice shows 3 or higher, a copy gets hit instead of you and disappears. When all three copies are gone, the spell is over.</p>
+<p class="roll"><b>What to roll:</b> When hit: roll 1d6 per remaining copy. Any 3+ means a copy takes the hit instead.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Invisibility</span><span class="smeta">Action · Touch</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>1 hour (concentration)</dd></div></dl>
+<p>Touch a creature (or yourself). It becomes Invisible, along with what it's wearing and carrying, for up to 1 hour. It becomes visible again as soon as it attacks, deals damage, or casts a spell. Use it to scout, sneak past guards, or get someone out of danger.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+<p class="muted"><b>With a higher slot:</b> One extra creature for each slot level above 2.</p>
+</div></details><h4 class="lvl">3rd level <span class="muted">(2 slots)</span></h4><details class="spell"><summary><span class="sname">Hypnotic Pattern</span><span class="smeta">Action · 120 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>A swirl of colors fills a 30-foot cube. Every creature that can see it makes a Wisdom save. If it fails, it is Charmed and Incapacitated, and its speed is 0: it just stands there staring. It snaps out of it if it takes damage or someone uses an action to shake it. Catch as many enemies as you can (and no friends!), then let your party deal with the rest. Don't attack the dazed ones until you're ready.</p>
+<p class="roll"><b>What to roll:</b> Each creature rolls a Wisdom save against DC 14.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Haste</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Pick a willing creature (best on Caelan). For 1 minute its speed is doubled, it gets +2 AC, it has advantage on Dexterity saves, and it gets one extra action each turn. The extra action can only be used to Attack (one attack only), Dash, Disengage, Hide or Utilize. WARNING: when the spell ends, the creature can't move or act until the end of its next turn, so protect your concentration.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details>
+  <h4 class="lvl">Also in your spellbook <span class="muted">(not prepared today: swap them in after a rest, or cast rituals)</span></h4><details class="spell"><summary><span class="sname">Identify</span><span class="smeta">1 minute · Touch</span><span class="pill rit">Ritual</span><span class="pill src">1st level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>1 minute, or as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div><div><dt>Needs</dt><dd>A 100 GP pearl (not used up)</dd></div></dl>
+<p>Touch a magic item and learn what it does and how to use it, and whether a spell is affecting a creature you touch.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Find Familiar</span><span class="smeta">1 hour · 10 feet</span><span class="pill rit">Ritual</span><span class="pill src">1st level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>1 hour, or as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>10 feet</dd></div><div><dt>Lasts</dt><dd>Until you dismiss it or it drops to 0 HP</dd></div><div><dt>Needs</dt><dd>10 GP of burning incense, used up</dd></div></dl>
+<p>Summon a spirit in the shape of a small animal (an owl, cat, raven, frog, bat and so on). It obeys you, you can talk to it telepathically within 100 feet, and as a Bonus Action you can see and hear what it sees and hears. It can't attack, but it can take the Help action to give a friend advantage. It can also deliver your touch spells (like Shocking Grasp) for you.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Comprehend Languages</span><span class="smeta">Action · Yourself</span><span class="pill rit">Ritual</span><span class="pill src">1st level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action, or as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>1 hour</dd></div></dl>
+<p>For 1 hour you understand the literal meaning of any language you hear or see signed. You can read any written language too, by touching the text (about 1 minute per page). It doesn't decode secret messages or let you speak the language.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">See Invisibility</span><span class="smeta">Action · Yourself</span><span class="pill src">2nd level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>1 hour</dd></div><div><dt>Needs</dt><dd>A pinch of talc and some powdered silver (no gold cost)</dd></div></dl>
+<p>For 1 hour you can see invisible creatures and objects, and see into the Ethereal Plane. They look ghostly and see-through to you.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Detect Thoughts</span><span class="smeta">Action · Yourself</span><span class="pill conc">Concentration</span><span class="pill src">2nd level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>For 1 minute you can sense nearby minds and read a creature's surface thoughts (what it is thinking about right now). You can try to dig deeper, but then the creature makes a Wisdom save and notices you on a success.</p>
+<p class="roll"><b>What to roll:</b> Deeper probing: target rolls a Wisdom save against DC 14.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Clairvoyance</span><span class="smeta">10 minutes · 1 mile</span><span class="pill conc">Concentration</span><span class="pill src">3rd level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>10 minutes</dd></div><div><dt>Range</dt><dd>1 mile</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div><div><dt>Needs</dt><dd>A focus worth 100 GP (a jeweled horn or glass eye). You do not have one yet.</dd></div></dl>
+<p>Create an invisible sensor at a place you know within a mile, and see or hear what's happening there.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Fly</span><span class="smeta">Action · Touch</span><span class="pill conc">Concentration</span><span class="pill src">3rd level · in spellbook</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div></dl>
+<p>Touch a willing creature. It can fly at a speed of 60 feet for 10 minutes. If the spell ends while it is in the air, it falls (unless it has another way to stay up), so be careful about concentration.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+<p class="muted"><b>With a higher slot:</b> One extra creature for each slot level above 3.</p>
+</div></details>
+</section>
+
+<section id="features">
+  <h2>Abilities and traits</h2>
+  <p class="muted">Everything your class, species and background give you. Tap to read what it does.</p>
+  <details class="feat"><summary><span class="sname">Spellcasting and your spellbook</span><span class="pill type">Rule</span></summary><div class="sbody"><p class="muted small">Wizard, level 1</p><p>Your magic comes from <b>Intelligence</b>. Every spell you know is written in your <b>spellbook</b> (all 17 are listed below). Each day you have <b>9 prepared</b> spells: those are the ones you can cast with slots. After a Long Rest you can choose a different 9 from your book. Cantrips are free and unlimited. Your quarterstaff is your <b>arcane focus</b>: hold it to cast spells that need a material. Don't lose the spellbook!</p></div></details><details class="feat"><summary><span class="sname">Ritual Adept</span><span class="pill type">Rule</span></summary><div class="sbody"><p class="muted small">Wizard, level 1</p><p>Any spell in your book marked <b>ritual</b> can be cast without preparing it and without a spell slot. It just takes 10 minutes longer. Use this for Detect Magic, Find Familiar and Comprehend Languages when there's no rush.</p></div></details><details class="feat"><summary><span class="sname">Arcane Recovery</span><span class="pill type">After a Short Rest</span></summary><div class="sbody"><p class="muted small">Wizard, level 1 · Once per day</p><p>When you finish a Short Rest, you can get back used spell slots whose levels add up to <b>3 or less</b>. For example, one 3rd-level slot, or a 2nd plus a 1st, or three 1sts. Once per day.</p></div></details><details class="feat"><summary><span class="sname">Scholar</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Wizard, level 2</p><p>You are an expert in <b>Arcana</b>, so you add double your proficiency bonus to it. That's already in your skill list.</p></div></details><details class="feat"><summary><span class="sname">Memorize Spell</span><span class="pill type">After a Short Rest</span></summary><div class="sbody"><p class="muted small">Wizard, level 5</p><p>Whenever you finish a Short Rest, you can swap one prepared spell for another spell in your spellbook. Handy if the day turns out different from what you expected.</p></div></details><details class="feat"><summary><span class="sname">Diviner: Divination Savant</span><span class="pill type">Already applied</span></summary><div class="sbody"><p class="muted small">Wizard subclass, level 3</p><p>Extra Divination spells were added to your spellbook for free (Detect Magic, Identify, See Invisibility, Clairvoyance among them).</p></div></details><details class="feat"><summary><span class="sname">Diviner: Portent</span><span class="pill type">No action</span></summary><div class="sbody"><p class="muted small">Wizard subclass, level 3 · 2 dice, rerolled every Long Rest</p><p>This is your signature power. <b>When you finish a Long Rest, roll two d20s and write the numbers down.</b> Those are your "foretold" rolls.</p><p>Any time you or a creature you can see is about to make a <b>d20 roll</b> (attack, saving throw or ability check), you can say "Portent!" <b>before it's rolled</b> and replace it with one of your numbers. Each number is used once.</p><ul><li>Rolled high (like 18)? Give it to Caelan for a sure hit, or to a friend making a save.</li><li>Rolled low (like 3)? Give it to an enemy making a saving throw against your Hold Person or Hypnotic Pattern.</li></ul><p>Unused numbers are lost when you roll new ones after your next Long Rest.</p></div></details><details class="feat"><summary><span class="sname">Ability Score Improvement</span><span class="pill type">Already applied</span></summary><div class="sbody"><p class="muted small">Wizard, level 4</p><p>+1 Intelligence and +1 Dexterity. Already in your numbers.</p></div></details><details class="feat"><summary><span class="sname">Elf: Darkvision</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p>You see in darkness within 60 feet as if it were dim light (in shades of gray).</p></div></details><details class="feat"><summary><span class="sname">Elf: Fey Ancestry</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p><b>Advantage</b> on saving throws to avoid or end being <b>Charmed</b>.</p></div></details><details class="feat"><summary><span class="sname">Elf: Keen Senses</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p>You're proficient in <b>Perception</b>. Already in your skills.</p></div></details><details class="feat"><summary><span class="sname">Elf: Trance</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p>You don't need to sleep, and magic can't put you to sleep (Brixa's Sleep spell won't affect you). You finish a Long Rest in just 4 hours of meditation, staying aware of your surroundings.</p></div></details><details class="feat"><summary><span class="sname">High Elf lineage</span><span class="pill type">Magic</span></summary><div class="sbody"><p class="muted small">Species · Detect Magic and Misty Step: each once per Long Rest, free</p><p>You know <b>Prestidigitation</b> (swap it for another wizard cantrip after any Long Rest if you like). You can cast <b>Detect Magic</b> and <b>Misty Step</b> once each per Long Rest without a spell slot.</p></div></details><details class="feat"><summary><span class="sname">Musician</span><span class="pill type">After a rest</span></summary><div class="sbody"><p class="muted small">Entertainer background feat · Every Short or Long Rest</p><p>When you finish a Short or Long Rest, play a song on your lute and give <b>Heroic Inspiration</b> to up to <b>3</b> friends who hear it. Each can spend it to <b>reroll any one die</b> right after rolling it. This is one of the best party buffs in the game. Never forget it. You also know how to play three instruments.</p></div></details>
+</section>
+
+
+
+<section id="scores">
+  <h2>Ability scores and saving throws</h2>
+  <p class="muted">The <b>modifier</b> is what you add to rolls. A <b>saving throw</b> is a roll to resist something bad, like dodging a fireball (Dexterity) or shrugging off poison (Constitution). The DM will say which. Roll d20 + the save number. ● means you're trained in that save.</p>
+  <div class="card scroll"><table><thead><tr><th>Ability</th><th>Score</th><th>Mod</th><th>Save</th></tr></thead><tbody><tr><td><b>Strength</b><div class="use">Lifting, pushing, climbing, jumping, hitting hard with non-finesse weapons.</div></td><td class="num">8</td><td class="num">−1</td><td class="num ">−1</td></tr><tr><td><b>Dexterity</b><div class="use">Agility, balance, reflexes, sneaking, aiming bows. Your armor and initiative use it.</div></td><td class="num">16</td><td class="num">+3</td><td class="num ">+3</td></tr><tr><td><b>Constitution</b><div class="use">Toughness and stamina. Adds to your Hit Points and helps you keep concentrating on spells.</div></td><td class="num">14</td><td class="num">+2</td><td class="num ">+2</td></tr><tr><td><b>Intelligence</b><div class="use">Memory, reasoning and book learning.</div></td><td class="num">16</td><td class="num">+3</td><td class="num hi">+6<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Wisdom</b><div class="use">Awareness, intuition and willpower. Noticing things.</div></td><td class="num">12</td><td class="num">+1</td><td class="num hi">+4<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Charisma</b><div class="use">Force of personality: persuading, lying, performing, intimidating.</div></td><td class="num">11</td><td class="num">+0</td><td class="num ">+0</td></tr></tbody></table>
+  <p class="muted small" style="margin-top:8px">How these were built: Base 15 Int, 14 Con, 13 Dex, 12 Wis, 10 Cha, 8 Str. Entertainer +2 Dex +1 Cha. Level 4: +1 Int +1 Dex.</p></div>
+  <h2 style="margin-top:24px">Skills</h2>
+  <p class="muted">When the DM says "make a Perception check", roll d20 + the number here. Skills in color are ones you're trained in.</p>
+  <div class="card scroll"><table><thead><tr><th>Skill</th><th>Roll</th><th>Why</th></tr></thead><tbody><tr class="prof"><td><b>Acrobatics</b> <span class="muted">(Dex)</span><div class="use">Keeping your balance, tumbling, wriggling free, landing on your feet.</div></td><td class="num">+6</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Animal Handling</b> <span class="muted">(Wis)</span><div class="use">Calming or controlling an animal, or guessing what it wants.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class="prof"><td><b>Arcana</b> <span class="muted">(Int)</span><div class="use">Knowing about magic, spells, magic items and magical creatures.</div></td><td class="num">+9</td><td class="muted small">Expert (double proficiency)</td></tr><tr class=""><td><b>Athletics</b> <span class="muted">(Str)</span><div class="use">Climbing, swimming, jumping, shoving, grappling.</div></td><td class="num">−1</td><td class="muted small">—</td></tr><tr class=""><td><b>Deception</b> <span class="muted">(Cha)</span><div class="use">Lying convincingly, bluffing, disguising your intentions.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>History</b> <span class="muted">(Int)</span><div class="use">Remembering past events, kingdoms, wars and legends.</div></td><td class="num">+3</td><td class="muted small">—</td></tr><tr class=""><td><b>Insight</b> <span class="muted">(Wis)</span><div class="use">Telling if someone is lying or what they really feel.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Intimidation</b> <span class="muted">(Cha)</span><div class="use">Scaring or pressuring someone into doing what you want.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class="prof"><td><b>Investigation</b> <span class="muted">(Int)</span><div class="use">Searching for clues, working out how something works, spotting traps by reasoning.</div></td><td class="num">+6</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Medicine</b> <span class="muted">(Wis)</span><div class="use">Stabilizing a dying friend (DC 10, no kit needed), or working out what made someone sick or killed them.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Nature</b> <span class="muted">(Int)</span><div class="use">Knowing about plants, animals, terrain and weather.</div></td><td class="num">+3</td><td class="muted small">—</td></tr><tr class="prof"><td><b>Perception</b> <span class="muted">(Wis)</span><div class="use">Spotting, hearing or noticing things. The most-rolled skill in the game.</div></td><td class="num">+4</td><td class="muted small">Proficient</td></tr><tr class="prof"><td><b>Performance</b> <span class="muted">(Cha)</span><div class="use">Music, dance, acting, storytelling for a crowd.</div></td><td class="num">+3</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Persuasion</b> <span class="muted">(Cha)</span><div class="use">Convincing someone politely and honestly.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>Religion</b> <span class="muted">(Int)</span><div class="use">Knowing about gods, rites, holy symbols and the undead.</div></td><td class="num">+3</td><td class="muted small">—</td></tr><tr class=""><td><b>Sleight of Hand</b> <span class="muted">(Dex)</span><div class="use">Pickpocketing, palming an object, quick hand tricks.</div></td><td class="num">+3</td><td class="muted small">—</td></tr><tr class=""><td><b>Stealth</b> <span class="muted">(Dex)</span><div class="use">Sneaking and hiding.</div></td><td class="num">+3</td><td class="muted small">—</td></tr><tr class=""><td><b>Survival</b> <span class="muted">(Wis)</span><div class="use">Tracking, hunting, finding your way, predicting weather.</div></td><td class="num">+1</td><td class="muted small">—</td></tr></tbody></table></div>
+</section>
+
+<section id="gear">
+  <h2>Gear</h2>
+  <div class="card"><ul><li>Quarterstaff, your arcane focus</li><li>2 Daggers</li><li>Spellbook</li><li>Lute</li><li>Scholar's Pack: backpack, book of lore, ink, ink pen, lamp, 10 flasks of oil, 10 sheets of parchment, tinderbox</li><li>2 Costumes</li><li>Mirror</li><li>Perfume</li><li>Traveler's clothes</li><li>Robe</li><li>16 gold pieces</li></ul>
+  <p><b>Tools you can use:</b> Lute, plus two more instruments of your choice (Musician). Add your proficiency (+3) to checks with them.</p>
+  <p><b>Languages:</b> Common, Elvish, Sylvan.</p></div>
+</section>
+
+<section id="you">
+  <h2>Who you are</h2>
+  <div class="card"><p><b>Personality:</b> Outgoing, flamboyant, introspective.</p><p><b>Why AJTH is here:</b> "He made me do it."</p></div>
+</section>
+
+<section id="rules">
+  <h2>Rules help</h2>
+  <details><summary><span class="sname">Rolling: checks, saves, attacks</span></summary><div class="sbody">
+    <p>Almost everything is a <b>d20 roll + a number</b>, trying to reach a target the DM knows:</p>
+    <ul><li><b>Ability check</b> (a skill): d20 + the skill number. Target is a DC (Difficulty Class): 10 easy, 15 medium, 20 hard.</li>
+    <li><b>Saving throw</b>: d20 + the save number, to resist something.</li>
+    <li><b>Attack roll</b>: d20 + to-hit number, against the target's Armor Class.</li></ul>
+    <p><b>Advantage:</b> roll two d20s and use the <b>higher</b>. <b>Disadvantage:</b> roll two and use the <b>lower</b>. If you have both, they cancel out: roll one.</p>
+    <p><b>Natural 20</b> on an attack always hits and is a critical hit. <b>Natural 1</b> on an attack always misses.</p>
+  </div></details>
+  <details><summary><span class="sname">Your turn: what you can do</span></summary><div class="sbody">
+    <p>On your turn: <b>move</b> (up to your speed, and you can split it up before and after your action), take <b>one Action</b>, and take a <b>Bonus Action</b> only if a spell or feature says it uses one. Talking a little is free.</p>
+    <p><b>Actions anyone can take:</b></p>
+    <ul><li><b>Attack</b>: swing or shoot a weapon.</li><li><b>Magic</b>: cast a spell or use a magic feature.</li><li><b>Dash</b>: move your speed again.</li><li><b>Disengage</b>: move away without enemies getting free hits.</li><li><b>Dodge</b>: attacks against you have disadvantage until your next turn, and you have advantage on Dexterity saves.</li><li><b>Help</b>: give a friend advantage on their next check or attack.</li><li><b>Hide</b>: Dexterity (Stealth) check to become hidden.</li><li><b>Search</b> / <b>Study</b>: look for something (Wisdom) or figure something out (Intelligence).</li><li><b>Influence</b>: persuade, deceive or intimidate someone.</li><li><b>Ready</b>: pick a trigger ("when the door opens, I cast Fire Bolt") and react when it happens.</li><li><b>Utilize</b>: use an object (drink a potion, pull a lever, use a Healer's Kit).</li></ul>
+    <p><b>Reaction</b> (one per round, even on others' turns): spells like Shield, or an <b>Opportunity Attack</b>, which means one free melee attack when an enemy next to you moves away.</p>
+  </div></details>
+  <details><summary><span class="sname">Hit Points, dropping to 0, and death saves</span></summary><div class="sbody">
+    <p>Damage lowers your HP. <b>Temporary HP</b> absorbs damage first and doesn't stack. At <b>0 HP</b> you fall unconscious.</p>
+    <p>At the start of each of your turns at 0 HP, roll a <b>death saving throw</b>: a plain d20, nothing added. <b>10 or higher</b> = a success, <b>9 or lower</b> = a failure. <b>3 successes</b>: you're stable. <b>3 failures</b>: you die. A <b>natural 20</b>: you wake up with 1 HP. A <b>natural 1</b>: two failures. Taking damage while at 0 = one failure (a critical hit = two).</p>
+    <p><b>Any healing at all wakes you up.</b> That's why Healing Word matters so much. A friend can also stabilize you with a DC 10 Wisdom (Medicine) check.</p>
+  </div></details>
+  <details><summary><span class="sname">Resting</span></summary><div class="sbody">
+    <p><b>Short Rest</b> (1 hour of downtime): spend Hit Dice to heal. Roll a d6, add your Constitution modifier (+2), and heal that much, as many times as you have Hit Dice left. Some features come back too (it says so on each one).</p>
+    <p><b>Long Rest</b> (8 hours, a night's sleep): get back <b>all</b> your HP, all spent Hit Dice, all spell slots and all once-per-day features. Only one Long Rest per day.</p>
+  </div></details>
+  <details><summary><span class="sname">Conditions (what they mean)</span></summary><div class="sbody">
+    <ul><li><b>Blinded:</b> you can't see; your attacks have disadvantage, attacks against you have advantage.</li>
+    <li><b>Charmed:</b> you can't attack the charmer, and it has advantage when it talks to you.</li>
+    <li><b>Frightened:</b> disadvantage on checks and attacks while you can see the source; you can't move closer to it.</li>
+    <li><b>Grappled:</b> speed 0; you can try to escape with an Athletics or Acrobatics check as your action.</li>
+    <li><b>Incapacitated:</b> you can't take actions, bonus actions or reactions; concentration breaks.</li>
+    <li><b>Invisible:</b> attacks against you have disadvantage, yours have advantage.</li>
+    <li><b>Paralyzed:</b> Incapacitated, can't move or speak; hits from within 5 feet are critical hits.</li>
+    <li><b>Poisoned:</b> disadvantage on attack rolls and ability checks.</li>
+    <li><b>Prone:</b> lying down. Standing up costs half your speed. Your attacks have disadvantage; melee attacks against you have advantage, ranged ones disadvantage.</li>
+    <li><b>Restrained:</b> speed 0; your attacks and Dexterity saves have disadvantage; attacks against you have advantage.</li>
+    <li><b>Unconscious:</b> Incapacitated, Prone, drop what you're holding; hits from within 5 feet are critical hits.</li></ul>
+  </div></details>
+  <details><summary><span class="sname">Cover, range, light</span></summary><div class="sbody">
+    <p><b>Half cover</b> (behind a low wall or another creature): +2 AC and Dex saves. <b>Three-quarters cover</b> (arrow slit, thick tree): +5. <b>Total cover</b>: can't be targeted.</p>
+    <p>Ranged attacks at <b>long range</b> (the second number, like 80/320) have disadvantage. So do ranged attacks while an enemy is right next to you.</p>
+    <p><b>Dim light</b>: disadvantage on Perception checks that rely on sight. <b>Darkness</b>: effectively blind, unless you have Darkvision, which treats darkness as dim light.</p>
+  </div></details>
+</section>
+
+<footer>Built for the Lantern Fair. No rolling here: grab your real dice. Questions? Ask your DM.</footer>
+</div>
+<script>
+(function(){
+  function get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function set(k,v){ try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k,v); } catch(e){} }
+  var boxes = document.querySelectorAll('input[type=checkbox][data-k]');
+  boxes.forEach(function(b){ b.checked = get(b.dataset.k) === '1'; b.addEventListener('change', function(){ set(b.dataset.k, b.checked ? '1' : null); }); });
+  var nums = document.querySelectorAll('input[type=number][data-k]');
+  nums.forEach(function(n){ var v = get(n.dataset.k); if (v !== null) n.value = v; n.addEventListener('input', function(){ set(n.dataset.k, n.value); }); });
+  document.getElementById('reset').addEventListener('click', function(){
+    if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
+    boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });
+    nums.forEach(function(n){ n.value = n.defaultValue; set(n.dataset.k, null); });
+  });
+})();
+</script>
+</body>
+</html>

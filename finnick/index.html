@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg">
+<title>Finnick · Character Sheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,50&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:#3d5ba8; --soft:#f4f1ea; --conc:#8a5a00; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --conc:#f0b44a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding:0 max(16px, env(safe-area-inset-right)) 80px max(16px, env(safe-area-inset-left)); }
+.wrap { max-width: 820px; margin: 0 auto; }
+h1,h2,h3 { font-family:var(--display); margin:0; text-wrap:balance; }
+h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); line-height:1.05; }
+h2 { font-size: 1.5rem; margin-bottom: 4px; }
+h4 { margin: 0; font-size: 1rem; }
+p { margin: 0 0 8px; } p:last-child { margin-bottom: 0; }
+ul { margin: 4px 0 8px; padding-left: 20px; } li { margin-bottom: 6px; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+header { padding: 32px 0 12px; border-bottom: 4px solid var(--accent); margin-bottom: 8px; }
+.eyebrow { font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.line { font-weight: 700; color: var(--accent); margin-top: 4px; }
+nav { position: sticky; top: 0; z-index: 5; background: var(--bg); display:flex; gap:6px; overflow-x:auto; padding: 10px 0; border-bottom: 1px solid var(--line); }
+nav a { flex:none; font-size:.85rem; font-weight:700; color:var(--fg); text-decoration:none; padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:var(--panel); }
+section { margin-top: 32px; scroll-margin-top: 64px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:10px; }
+.stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:8px; margin-top: 14px; }
+.stat { background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:12px; padding:10px 12px; }
+.stat .k { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.stat .v { font-family:var(--display); font-size:1.8rem; font-weight:700; line-height:1.1; }
+.stat .n { font-size:.8rem; color:var(--muted); line-height:1.3; }
+table { width:100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align: top; }
+th { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+td.num { font-variant-numeric: tabular-nums; font-weight:700; white-space:nowrap; font-size:1.05rem; }
+td.hi { color: var(--accent); }
+.dot { font-size:.6rem; margin-left:4px; vertical-align: 2px; }
+tr.prof td:first-child b { color: var(--accent); }
+.use { font-size:.83rem; color:var(--muted); line-height:1.35; margin-top:2px; }
+.scroll { overflow-x:auto; }
+ol.turn { padding-left: 22px; margin: 0; } ol.turn li { margin-bottom: 10px; }
+details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
+summary { cursor:pointer; padding:12px 14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+summary::after { content:"+"; margin-left:auto; font-weight:700; color:var(--muted); font-size:1.2rem; }
+details[open] summary::after { content:"−"; }
+.sname { font-weight:700; font-size:1.02rem; }
+.smeta { font-size:.82rem; color:var(--muted); }
+.sbody { padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.facts { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:6px 14px; margin:0 0 10px; font-size:.88rem; }
+.facts dt { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; } .facts dd { margin:0; }
+.roll { background: var(--soft); border-left: 4px solid var(--accent); padding: 8px 10px; border-radius: 0 8px 8px 0; }
+.pill { display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+.pill.conc { color: var(--conc); border-color: var(--conc); } .pill.rit { color: var(--accent); border-color: var(--accent); }
+.pill.type { color: var(--accent); border-color: var(--accent); }
+h4.lvl { margin-top: 18px; font-family: var(--display); font-size: 1.15rem; }
+.callout { background: var(--soft); border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+.forms { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:8px; margin-top:8px; }
+.form { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; font-size:.92rem; }
+.form h4 { font-family: var(--display); font-size: 1.1rem; margin-bottom: 4px; }
+.trk { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); flex-wrap: wrap; }
+.trk:last-child { border-bottom: 0; }
+.boxes { display:flex; gap:6px; flex-wrap: wrap; }
+.box input { position:absolute; opacity:0; width:1px; height:1px; }
+.box span { display:block; width:30px; height:30px; border:2px solid var(--accent); border-radius:8px; cursor:pointer; }
+.box input:checked + span { background: var(--accent); }
+.box input:focus-visible + span { outline: 3px solid var(--fg); outline-offset: 2px; }
+button.reset { font: inherit; font-weight:700; padding:10px 14px; border-radius:10px; border:1px solid var(--accent); background:var(--panel); color:var(--fg); cursor:pointer; margin-top:10px; }
+.hpbox { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+.hpbox input { font: inherit; font-size:1.4rem; font-weight:700; width: 90px; padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color: var(--fg); }
+footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
+@media print { nav, button.reset { display:none; } details { break-inside: avoid; } details:not([open]) .sbody { display:block; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Character sheet · Level 5 · he/him</p>
+  <h1>Finnick</h1>
+  <p class="line">Forest Gnome Druid · Circle of the Stars · Guard</p>
+  <p style="margin-top:8px">A small gnome who reads the stars (and maybe dabbles in the darker stuff). Your job: shoot starlight every turn, and be the party's best healer.</p>
+  <div class="stats">
+    <div class="stat"><div class="k">Armor Class</div><div class="v">14</div><div class="n">Leather armor (11) + Dex (+1) + shield (+2). With Barkskin: 17.</div></div>
+    <div class="stat"><div class="k">Hit Points</div><div class="v">38</div><div class="n">Maximum. Hit Dice: 5 × d8</div></div>
+    <div class="stat"><div class="k">Speed</div><div class="v">30 ft</div><div class="n">Small · Darkvision 60 ft</div></div>
+    <div class="stat"><div class="k">Initiative</div><div class="v">+4</div><div class="n">Dex +1, plus +3 from the Alert feat</div></div>
+    <div class="stat"><div class="k">Proficiency</div><div class="v">+3</div><div class="n">Added to things you're trained in</div></div>
+    <div class="stat"><div class="k">Passive Perception</div><div class="v">17</div><div class="n">What you notice without rolling</div></div>
+    <div class="stat"><div class="k">Spell Save DC</div><div class="v">15</div><div class="n">What enemies roll against</div></div>
+    <div class="stat"><div class="k">Spell Attack</div><div class="v">+7</div><div class="n">Add to d20 for spell attacks</div></div>
+  </div>
+</header>
+<nav aria-label="Jump to"><a href="#turn">Your turn</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a><a href="#spells">Spells</a><a href="#features">Abilities</a><a href="#forms">Animal forms</a><a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+
+<section id="how">
+  <div class="callout">
+    <p><b>How to read this page.</b> When the DM asks you to roll, it's almost always a <b>d20</b> (the 20-sided die) plus a number from this page. "d20 + 7" means roll the d20 and add 7. Tell the DM the total. Damage is written like <b>2d10 + 4</b>: roll two 10-sided dice, add them up, then add 4. Tap any spell or ability below to open the full explanation. There's a <a href="#rules">rules help</a> section at the bottom.</p>
+  </div>
+</section>
+
+<section id="turn">
+  <h2>Your turn, step by step</h2>
+  <p class="muted">In a fight, on your turn you can <b>move</b> up to 30 feet, take <b>one Action</b>, and maybe <b>one Bonus Action</b> if something gives you one. Once per round you can also take a <b>Reaction</b>, even on other people's turns. Here's what usually works best for Finnick:</p>
+  <div class="card"><ol class="turn"><li><b>First turn of a fight.</b> <b>Starry Form: Archer</b> (Bonus Action, uses one Wild Shape) and fire a starlight arrow right away: d20 + 7, 1d8 + 4 radiant. Then with your Action: <b>Guiding Bolt</b> (4 free per day): d20 + 7, 4d6 radiant, and the next attack on that enemy has advantage.</li><li><b>Every turn after that.</b> Bonus Action: <b>Archer arrow</b> again (free while the form lasts, 10 minutes). Action: <b>Guiding Bolt</b> while free uses last, then <b>Starry Wisp</b> (d20 + 7, 2d8). For crowds: <b>Flaming Sphere</b> or <b>Conjure Animals</b>.</li><li><b>When a friend drops to 0 HP.</b> Your arrow is a Bonus Action, so with your Action cast <b>Cure Wounds</b> (2d8 + 4). Or swap to <b>Healing Word</b> as your Bonus Action that turn. If you're in <b>Chalice</b> form, every healing spell also heals someone an extra 1d8 + 4.</li><li><b>Nobody can reach a dying friend.</b> <b>Spare the Dying</b> from 30 feet stops them dying.</li><li><b>You go first a lot.</b> Alert gives you +4 initiative. You may also swap your initiative with a willing friend.</li></ol></div>
+</section>
+
+<section id="track">
+  <h2>Tracker</h2>
+  <p class="muted">Tap a box when you use something. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
+  <div class="card">
+    <div class="hpbox"><label for="hp"><b>Current HP</b> <span class="muted">(max 38)</span></label><input id="hp" type="number" inputmode="numeric" data-k="finnick:hp" value="38"><label for="thp"><b>Temporary HP</b></label><input id="thp" type="number" inputmode="numeric" data-k="finnick:thp" value="0"></div>
+    <div class="trk"><span class="tl">1st level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:slot1:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot1:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot1:2"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot1:3"><span></span></label></span></div><div class="trk"><span class="tl">2nd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:slot2:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot2:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot2:2"><span></span></label></span></div><div class="trk"><span class="tl">3rd level slots</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:slot3:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:slot3:1"><span></span></label></span></div><div class="trk"><span class="tl">Guiding Bolt (free)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:gb:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:gb:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:gb:2"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:gb:3"><span></span></label></span></div><div class="trk"><span class="tl">Speak with Animals (gnome)</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:swa:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:swa:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:swa:2"><span></span></label></span></div><div class="trk"><span class="tl">Wild Shape</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:ws:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:ws:1"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d8) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:hd:4"><span></span></label></span></div>
+    <div class="trk"><span class="tl">Death saves: successes</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:ds:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:ds:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:ds:2"><span></span></label></span></div><div class="trk"><span class="tl">Death saves: failures</span><span class="boxes"><label class="box"><input type="checkbox" data-k="finnick:df:0"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:df:1"><span></span></label><label class="box"><input type="checkbox" data-k="finnick:df:2"><span></span></label></span></div>
+    <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
+  </div>
+</section>
+
+<section id="attacks">
+  <h2>Attacks</h2>
+  <p class="muted">"To hit" means roll a d20 and add that number. The DM tells you if it beats the target's Armor Class. If it hits, roll the damage. <b>Rolled a natural 20</b> (the die shows 20)? That's a <b>critical hit</b>: roll all the damage dice twice and add the bonus once.</p>
+  <div class="card scroll"><table><thead><tr><th>Attack</th><th>To hit</th><th>Damage</th><th>Range</th></tr></thead><tbody><tr><td><b>Starry Form: Archer arrow</b><div class="use">Bonus Action every turn while in Starry Form (Archer).</div></td><td class="num">d20 + 7</td><td>1d8 + 4 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Guiding Bolt (spell)</b><div class="use">Next attack against target has advantage. 4 free casts per Long Rest.</div></td><td class="num">d20 + 7</td><td>4d6 Radiant</td><td class="small">120 ft</td></tr><tr><td><b>Starry Wisp (cantrip)</b><div class="use">Unlimited. Target glows and can't be invisible.</div></td><td class="num">d20 + 7</td><td>2d8 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Thorn Whip (cantrip)</b><div class="use">Pulls a Large-or-smaller target 10 ft toward you.</div></td><td class="num">d20 + 7</td><td>2d6 Piercing</td><td class="small">30 ft</td></tr><tr><td><b>Light Crossbow</b><div class="use">Two hands. Loading: one shot per turn. 20 bolts.</div></td><td class="num">d20 + 4</td><td>1d8 + 1 Piercing</td><td class="small">80 ft (up to 320 ft with disadvantage)</td></tr><tr><td><b>Spear</b><div class="use">Backup only.</div></td><td class="num">d20 + 2</td><td>1d6 − 1 Piercing (1d8 − 1 two hands)</td><td class="small">Melee, or thrown 20/60 ft</td></tr></tbody></table></div>
+</section>
+
+<section id="spells">
+  <h2>Spells</h2>
+  <div class="callout">
+    <p><b>How your magic works.</b> <b>Cantrips</b> are free: cast them as often as you like. Every other spell uses up a <b>spell slot</b> of its level or higher. You have <b>4 1st level, 3 2nd level, 2 3rd level</b> slots, and you get them all back after a Long Rest. Casting a spell with a higher slot than needed usually makes it stronger.</p>
+    <p><b>Spell attack:</b> d20 + 7. <b>Spell save DC:</b> 15. When a spell says "save", the <i>target</i> rolls and needs 15 or more to resist.</p>
+    <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 + 2) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
+    <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
+  </div>
+  <h4 class="lvl">Cantrips <span class="muted">(free, unlimited)</span></h4><details class="spell"><summary><span class="sname">Starry Wisp</span><span class="smeta">Action · 60 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Fling a mote of starlight. If it hits, the target glows with dim light out to 10 feet and can't be Invisible until the end of your next turn.</p>
+<p class="roll"><b>What to roll:</b> To hit: d20 + 7 (spell attack). Damage: 2d8 Radiant.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Thorn Whip</span><span class="smeta">Action · 30 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>A thorny vine lashes out at a creature. If you hit and the creature is Large or smaller, you can pull it up to 10 feet straight toward you. Good for dragging an enemy off a friend or into a hazard.</p>
+<p class="roll"><b>What to roll:</b> To hit: d20 + 7 (spell attack). Damage: 2d6 Piercing.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Spare the Dying</span><span class="smeta">Action · 30 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Pick a creature you can see within 30 feet that is at 0 Hit Points but not dead. It becomes Stable: it stops making death saving throws. It is still unconscious at 0 HP until it heals or regains 1 HP after 1d4 hours. Use it when a friend is dying and you have no healing left.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Druidcraft</span><span class="smeta">Action · 30 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Small nature tricks with no combat use: predict the weather for the next 24 hours, make a flower bloom or a seed sprout, make a harmless sensory effect like falling leaves or a puff of wind, or light or snuff out a candle or small campfire.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Guidance</span><span class="smeta">Action · Touch</span><span class="pill conc">Concentration</span><span class="pill src">Circle of the Stars (Star Map)</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Touch a willing creature (you can touch yourself) and pick one skill, like Stealth or Athletics. Until the spell ends, that creature adds 1d4 to every check it makes with that skill.</p>
+<p class="roll"><b>What to roll:</b> The creature rolls 1d4 and adds it to its d20 check with that skill.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Minor Illusion</span><span class="smeta">Action · 30 feet</span><span class="pill src">Forest Gnome</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute</dd></div></dl>
+<p>Make a fake sound (anything from a whisper to a lion's roar) or a still image of an object, no bigger than a 5-foot cube (a crate, a door, a bush). Anything that touches the image passes right through it. A creature that takes an action to study it can make an Intelligence (Investigation) check against your spell save DC to realize it's fake. Great for hiding behind a "crate" or making guards chase a noise.</p>
+<p class="roll"><b>What to roll:</b> Nothing for you to roll. Creatures that study it roll against your DC 15.</p>
+
+</div></details>
+  <h4 class="lvl">Always prepared <span class="muted">(free extras: they don't count against your list)</span></h4><details class="spell"><summary><span class="sname">Guiding Bolt</span><span class="smeta">Action · 120 feet</span><span class="pill src">1st level · Circle of the Stars: 4 free casts per Long Rest</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>120 feet</dd></div><div><dt>Lasts</dt><dd>Instant (the glow lasts until the end of your next turn)</dd></div></dl>
+<p>A flash of starlight streaks at a creature. If it hits, it does big damage and the target glows. The next attack roll anyone makes against it before the end of your next turn has advantage.</p>
+<p class="roll"><b>What to roll:</b> To hit: d20 + 7 (spell attack). Damage: 4d6 Radiant.</p>
+<p class="muted"><b>With a higher slot:</b> +1d6 damage for each slot level above 1.</p>
+</div></details><details class="spell"><summary><span class="sname">Speak with Animals</span><span class="smeta">Action · Yourself</span><span class="pill rit">Ritual</span><span class="pill src">1st level · Druidic, and Forest Gnome: 3 free casts per Long Rest</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action, or 10 minutes longer as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>10 minutes</dd></div></dl>
+<p>For 10 minutes you can understand and talk with Beasts (normal animals). Most animals only know about their immediate area: who passed by, where food is, what scared them. Cast as a ritual when you have 10 spare minutes and it costs no slot.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. Your DM might ask for a Wisdom (Animal Handling) or Charisma check to convince one to help.</p>
+
+</div></details>
+  <h4 class="lvl" style="margin-top:22px;font-size:1.3rem">Prepared spells</h4>
+  <p class="muted">These 9 use your spell slots.</p>
+  <h4 class="lvl">1st level <span class="muted">(4 slots)</span></h4><details class="spell"><summary><span class="sname">Cure Wounds</span><span class="smeta">Action · Touch</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Touch a creature to heal it. It heals more than Healing Word, but you have to be next to them and it uses your Action.</p>
+<p class="roll"><b>What to roll:</b> Healing: 2d8 + 4 Hit Points.</p>
+<p class="muted"><b>With a higher slot:</b> +2d8 healing for each slot level above 1.</p>
+</div></details><details class="spell"><summary><span class="sname">Healing Word</span><span class="smeta">Bonus Action · 60 feet</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Speak a word of power and a creature you can see within 60 feet heals. Because it is a Bonus Action at range, this is THE spell for getting a friend at 0 HP back on their feet. They wake up and can act on their turn.</p>
+<p class="roll"><b>What to roll:</b> Healing: 2d4 + 4 Hit Points.</p>
+<p class="muted"><b>With a higher slot:</b> +2d4 healing for each slot level above 1.</p>
+</div></details><details class="spell"><summary><span class="sname">Thunderwave</span><span class="smeta">Action · Yourself</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Yourself, in a 15-foot cube</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>A wave of thunder bursts out from you in a 15-foot cube. Each creature in it makes a Constitution save. If it fails, it takes damage and is pushed 10 feet away from you. If it succeeds, it takes half damage and isn't pushed. Loose objects get pushed too. It is LOUD: anyone within 300 feet hears it. Great when you are surrounded.</p>
+<p class="roll"><b>What to roll:</b> Each creature rolls a Constitution save against DC 15. Fail: 2d8 Thunder damage and pushed 10 feet. Success: half damage.</p>
+<p class="muted"><b>With a higher slot:</b> +1d8 damage for each slot level above 1.</p>
+</div></details><details class="spell"><summary><span class="sname">Faerie Fire</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Glowing light outlines everything in a 20-foot cube. Each creature in it makes a Dexterity save. If it fails, it glows (dim light, 10 feet), can't be Invisible, and every attack roll against it has advantage. That helps your whole party hit it.</p>
+<p class="roll"><b>What to roll:</b> Each creature rolls a Dexterity save against DC 15.</p>
+
+</div></details><h4 class="lvl">2nd level <span class="muted">(3 slots)</span></h4><details class="spell"><summary><span class="sname">Barkskin</span><span class="smeta">Bonus Action · Touch</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>1 hour</dd></div></dl>
+<p>Touch a willing creature (or yourself). Its skin turns tough as bark, so its Armor Class can't be lower than 17 for 1 hour. NOT concentration, so you can still use Moonbeam or Entangle. Cast it before a fight you can see coming.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. AC becomes 17 if it was lower.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Flaming Sphere</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>A 5-foot ball of fire appears. Any creature that ends its turn within 5 feet of it makes a Dexterity save. As a Bonus Action on each of your later turns you can roll the sphere up to 30 feet, and if you ram it into a creature, that creature makes the save too. It sets things on fire and lights up the area.</p>
+<p class="roll"><b>What to roll:</b> Dexterity save against DC 15. Fail: 2d6 Fire damage. Success: half that.</p>
+<p class="muted"><b>With a higher slot:</b> +1d6 damage for each slot level above 2.</p>
+</div></details><details class="spell"><summary><span class="sname">Lesser Restoration</span><span class="smeta">Bonus Action · Touch</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Bonus Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Touch a creature and end one of these conditions on it: Blinded, Deafened, Paralyzed, or Poisoned.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><h4 class="lvl">3rd level <span class="muted">(2 slots)</span></h4><details class="spell"><summary><span class="sname">Revivify</span><span class="smeta">Action · Touch</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div><div><dt>Needs</dt><dd>A diamond worth 300 GP or more, used up. YOU DO NOT HAVE ONE YET. Buy or find one.</dd></div></dl>
+<p>Touch a creature that died within the last minute. It comes back to life with 1 Hit Point. It can't bring back someone who died of old age or is missing body parts it needs to live. It only works with a 300 GP diamond.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details><details class="spell"><summary><span class="sname">Conjure Animals</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></summary>
+<div class="sbody">
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>10 minutes (concentration)</dd></div></dl>
+<p>A pack of spirit animals (wolves, hawks, whatever you picture) appears and fills a 10-foot cube near you. Whenever the pack moves within 10 feet of an enemy you can see, or an enemy moves within 10 feet of the pack or ends its turn there, you can make that enemy save. Each enemy only has to save once per turn. As a Bonus Action on later turns you can move the pack up to 30 feet. You have advantage on Strength saves while you're within 5 feet of the pack.</p>
+<p class="roll"><b>What to roll:</b> Dexterity save against DC 15. Fail: 3d10 Slashing damage.</p>
+<p class="muted"><b>With a higher slot:</b> +1d10 damage for each slot level above 3.</p>
+</div></details>
+  
+</section>
+
+<section id="features">
+  <h2>Abilities and traits</h2>
+  <p class="muted">Everything your class, species and background give you. Tap to read what it does.</p>
+  <details class="feat"><summary><span class="sname">Spellcasting</span><span class="pill type">Rule</span></summary><div class="sbody"><p class="muted small">Druid, level 1</p><p>Your magic comes from <b>Wisdom</b>. You can cast the spells on your <b>prepared</b> list using spell slots. Cantrips are free and unlimited. After every Long Rest you may swap any prepared spells for other druid spells if you want to. Your staff is your <b>druidic focus</b>: hold it to cast spells that need a material.</p></div></details><details class="feat"><summary><span class="sname">Druidic</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Druid, level 1</p><p>You know Druidic, the secret language of druids, and can leave hidden messages in it that only other druids notice. You also always have <b>Speak with Animals</b> prepared (it doesn't count against your 9).</p></div></details><details class="feat"><summary><span class="sname">Primal Order: Magician</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Druid, level 1</p><p>You know one extra cantrip (already included in your list). You also add your Wisdom modifier (+4) to Intelligence (Arcana) and Intelligence (Nature) checks. This is already included in the skill list.</p></div></details><details class="feat"><summary><span class="sname">Wild Shape</span><span class="pill type">Bonus Action</span></summary><div class="sbody"><p class="muted small">Druid, level 2 · 2 per Long Rest. You get 1 use back when you finish a Short Rest.</p><p>Turn into an animal you know (see <b>Your animal forms</b> below). It lasts up to 2 hours. While transformed:</p>
+<ul><li><b>Your Hit Points stay the same.</b> You also gain <b>5 Temporary Hit Points</b>. Damage comes off these first, and they disappear when you change back.</li>
+<li>You use the animal's Armor Class, speed, Strength, Dexterity, Constitution and attacks. You keep your Intelligence, Wisdom, Charisma, skills, saving throws and class features.</li>
+<li>You <b>can't cast spells</b> and can't talk. A spell you were already concentrating on keeps going.</li>
+<li>Change back early as a Bonus Action. You change back automatically if you're knocked to 0 HP or become Incapacitated.</li></ul>
+<p>Starry Form also spends a Wild Shape use. In most fights Starry Form is the better choice.</p></div></details><details class="feat"><summary><span class="sname">Wild Companion</span><span class="pill type">Magic action</span></summary><div class="sbody"><p class="muted small">Druid, level 2</p><p>Spend one spell slot <b>or</b> one Wild Shape use to summon a little spirit animal friend (this casts the spell <i>Find Familiar</i> for free). It's a Fey spirit shaped like a cat, owl, frog, raven or similar. It can scout, carry small things, and take the Help action to give an ally advantage, but it can't attack. It goes away when you finish a Long Rest.</p></div></details><details class="feat"><summary><span class="sname">Wild Resurgence</span><span class="pill type">No action needed</span></summary><div class="sbody"><p class="muted small">Druid, level 5</p><p>Two ways to trade resources:</p><ul><li>Out of Wild Shape uses? Once per turn you can spend a spell slot to get one Wild Shape use back.</li><li>Once per Long Rest you can spend a Wild Shape use to get back one <b>level 1</b> spell slot.</li></ul></div></details><details class="feat"><summary><span class="sname">Circle of the Stars: Star Map</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Druid subclass, level 3 · Guiding Bolt: 4 free casts per Long Rest</p><p>You carry a star chart (a scroll, tablet, or star pattern on your shield, your choice). It gives you the <b>Guidance</b> cantrip and <b>Guiding Bolt</b> always prepared, and you can cast Guiding Bolt <b>4 times per Long Rest without a spell slot</b>. If you lose the map, you can make a new one in an hour of study during a rest.</p></div></details><details class="feat"><summary><span class="sname">Circle of the Stars: Starry Form</span><span class="pill type">Bonus Action</span></summary><div class="sbody"><p class="muted small">Druid subclass, level 3 · Spends 1 Wild Shape use · lasts 10 minutes</p><p>Instead of turning into an animal, spend a Wild Shape use to <b>glow with a constellation</b> for 10 minutes. You give off bright light for 10 feet and can still cast spells normally. Pick one of three constellations each time you activate it:</p>
+<ul><li><b>Archer</b> (your main choice in fights): when you activate it, and as a Bonus Action on every later turn, shoot a starlight arrow at a creature within 60 feet: <b>d20 + 7 to hit, 1d8 + 4 Radiant</b>.</li>
+<li><b>Chalice</b> (when the party needs healing): whenever you cast a healing spell with a slot, you or another creature within 30 feet <b>also heals 1d8 + 4</b>.</li>
+<li><b>Dragon</b> (when you're holding a key concentration spell): when you make an Intelligence or Wisdom check, or a Constitution save to keep concentration, <b>a d20 roll of 9 or lower counts as a 10</b>.</li></ul></div></details><details class="feat"><summary><span class="sname">Ability Score Improvement</span><span class="pill type">Already applied</span></summary><div class="sbody"><p class="muted small">Druid, level 4</p><p>+1 Wisdom and +1 Constitution. Already in your numbers.</p></div></details><details class="feat"><summary><span class="sname">Gnome: Darkvision</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p>You can see in darkness within 60 feet as if it were dim light (in shades of gray).</p></div></details><details class="feat"><summary><span class="sname">Gnome: Gnomish Cunning</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Species</p><p>You have <b>advantage</b> on <b>Intelligence, Wisdom and Charisma saving throws</b>. Those cover most mind-affecting magic.</p></div></details><details class="feat"><summary><span class="sname">Forest Gnome lineage</span><span class="pill type">Magic</span></summary><div class="sbody"><p class="muted small">Species · Speak with Animals: 3 free casts per Long Rest</p><p>You know the <b>Minor Illusion</b> cantrip, and you can cast <b>Speak with Animals</b> 3 times per Long Rest without a slot.</p></div></details><details class="feat"><summary><span class="sname">Alert</span><span class="pill type">Always on</span></summary><div class="sbody"><p class="muted small">Guard background feat</p><p>Add <b>+3</b> to your initiative rolls (already in your Initiative number). Right after rolling initiative, you can swap your result with a willing ally's.</p></div></details>
+</section>
+
+<section id="forms">
+  <h2>Your animal forms (Wild Shape)</h2>
+  <p class="muted">These are the 6 animals you know. When you Wild Shape, your HP stays the same and you get 5 Temporary HP. Use the animal's AC, speed and attacks below. These numbers come from the Monster Manual. If your DM's book shows slightly different numbers, use theirs.</p>
+  <div class="forms"><div class="form"><h4>Cat <span class="muted">Tiny</span></h4><p><b>AC</b> 12 · <b>Speed</b> 40 ft, climb 30 ft</p><p>Scratch: +0 to hit, 1 Slashing</p><p class="muted">Perception +3, Stealth +4. For spying and sneaking. Nobody suspects a cat.</p></div><div class="form"><h4>Spider <span class="muted">Tiny</span></h4><p><b>AC</b> 12 · <b>Speed</b> 20 ft, climb 20 ft (walls and ceilings)</p><p>Bite: +4 to hit, 1 Piercing, and the target makes a DC 9 Con save or takes 1d4 Poison</p><p class="muted">Sees in the dark (30 ft). Squeeze under doors and through cracks.</p></div><div class="form"><h4>Wolf <span class="muted">Medium</span></h4><p><b>AC</b> 13 · <b>Speed</b> 40 ft</p><p>Bite: +4 to hit, 2d4 + 2 Piercing. Target makes a DC 11 Strength save or falls Prone</p><p class="muted">Pack Tactics: advantage on attacks if a friend is next to the target. Keen smell for tracking.</p></div><div class="form"><h4>Black Bear <span class="muted">Medium</span></h4><p><b>AC</b> 11 · <b>Speed</b> 40 ft, climb 30 ft</p><p>Two attacks per Attack action: Bite +4, 1d6 + 2 Piercing; Claws +4, 2d4 + 2 Slashing</p><p class="muted">Your strongest fighting form.</p></div><div class="form"><h4>Warhorse <span class="muted">Large</span></h4><p><b>AC</b> 11 · <b>Speed</b> 60 ft</p><p>Hooves: +6 to hit, 2d6 + 4 Bludgeoning</p><p class="muted">A friend can ride you. Fastest way to get somewhere or escape.</p></div><div class="form"><h4>Giant Poisonous Snake <span class="muted">Medium</span></h4><p><b>AC</b> 14 · <b>Speed</b> 30 ft, swim 30 ft</p><p>Bite: +6 to hit, reach 10 ft, 1d4 + 4 Piercing, plus a DC 11 Con save: 3d6 Poison on a fail, half on a success</p><p class="muted">Good AC and a nasty bite.</p></div></div>
+</section>
+
+<section id="scores">
+  <h2>Ability scores and saving throws</h2>
+  <p class="muted">The <b>modifier</b> is what you add to rolls. A <b>saving throw</b> is a roll to resist something bad, like dodging a fireball (Dexterity) or shrugging off poison (Constitution). The DM will say which. Roll d20 + the save number. ● means you're trained in that save.</p>
+  <div class="card scroll"><table><thead><tr><th>Ability</th><th>Score</th><th>Mod</th><th>Save</th></tr></thead><tbody><tr><td><b>Strength</b><div class="use">Lifting, pushing, climbing, jumping, hitting hard with non-finesse weapons.</div></td><td class="num">8</td><td class="num">−1</td><td class="num ">−1</td></tr><tr><td><b>Dexterity</b><div class="use">Agility, balance, reflexes, sneaking, aiming bows. Your armor and initiative use it.</div></td><td class="num">13</td><td class="num">+1</td><td class="num ">+1</td></tr><tr><td><b>Constitution</b><div class="use">Toughness and stamina. Adds to your Hit Points and helps you keep concentrating on spells.</div></td><td class="num">15</td><td class="num">+2</td><td class="num ">+2</td></tr><tr><td><b>Intelligence</b><div class="use">Memory, reasoning and book learning.</div></td><td class="num">13</td><td class="num">+1</td><td class="num hi">+4<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Wisdom</b><div class="use">Awareness, intuition and willpower. Noticing things.</div></td><td class="num">18</td><td class="num">+4</td><td class="num hi">+7<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Charisma</b><div class="use">Force of personality: persuading, lying, performing, intimidating.</div></td><td class="num">10</td><td class="num">+0</td><td class="num ">+0</td></tr></tbody></table>
+  <p class="muted small" style="margin-top:8px">How these were built: Base 15 Wis, 14 Con, 13 Dex, 12 Int, 10 Cha, 8 Str. Guard +2 Wis +1 Int. Level 4: +1 Wis +1 Con.</p></div>
+  <h2 style="margin-top:24px">Skills</h2>
+  <p class="muted">When the DM says "make a Perception check", roll d20 + the number here. Skills in color are ones you're trained in.</p>
+  <div class="card scroll"><table><thead><tr><th>Skill</th><th>Roll</th><th>Why</th></tr></thead><tbody><tr class=""><td><b>Acrobatics</b> <span class="muted">(Dex)</span><div class="use">Keeping your balance, tumbling, wriggling free, landing on your feet.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Animal Handling</b> <span class="muted">(Wis)</span><div class="use">Calming or controlling an animal, or guessing what it wants.</div></td><td class="num">+4</td><td class="muted small">—</td></tr><tr class=""><td><b>Arcana</b> <span class="muted">(Int)</span><div class="use">Knowing about magic, spells, magic items and magical creatures.</div></td><td class="num">+5</td><td class="muted small">Magician (+Wis)</td></tr><tr class="prof"><td><b>Athletics</b> <span class="muted">(Str)</span><div class="use">Climbing, swimming, jumping, shoving, grappling.</div></td><td class="num">+2</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Deception</b> <span class="muted">(Cha)</span><div class="use">Lying convincingly, bluffing, disguising your intentions.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>History</b> <span class="muted">(Int)</span><div class="use">Remembering past events, kingdoms, wars and legends.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class="prof"><td><b>Insight</b> <span class="muted">(Wis)</span><div class="use">Telling if someone is lying or what they really feel.</div></td><td class="num">+7</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Intimidation</b> <span class="muted">(Cha)</span><div class="use">Scaring or pressuring someone into doing what you want.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>Investigation</b> <span class="muted">(Int)</span><div class="use">Searching for clues, working out how something works, spotting traps by reasoning.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class="prof"><td><b>Medicine</b> <span class="muted">(Wis)</span><div class="use">Stabilizing a dying friend (DC 10, no kit needed), or working out what made someone sick or killed them.</div></td><td class="num">+7</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Nature</b> <span class="muted">(Int)</span><div class="use">Knowing about plants, animals, terrain and weather.</div></td><td class="num">+5</td><td class="muted small">Magician (+Wis)</td></tr><tr class="prof"><td><b>Perception</b> <span class="muted">(Wis)</span><div class="use">Spotting, hearing or noticing things. The most-rolled skill in the game.</div></td><td class="num">+7</td><td class="muted small">Proficient</td></tr><tr class=""><td><b>Performance</b> <span class="muted">(Cha)</span><div class="use">Music, dance, acting, storytelling for a crowd.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>Persuasion</b> <span class="muted">(Cha)</span><div class="use">Convincing someone politely and honestly.</div></td><td class="num">+0</td><td class="muted small">—</td></tr><tr class=""><td><b>Religion</b> <span class="muted">(Int)</span><div class="use">Knowing about gods, rites, holy symbols and the undead.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Sleight of Hand</b> <span class="muted">(Dex)</span><div class="use">Pickpocketing, palming an object, quick hand tricks.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Stealth</b> <span class="muted">(Dex)</span><div class="use">Sneaking and hiding.</div></td><td class="num">+1</td><td class="muted small">—</td></tr><tr class=""><td><b>Survival</b> <span class="muted">(Wis)</span><div class="use">Tracking, hunting, finding your way, predicting weather.</div></td><td class="num">+4</td><td class="muted small">—</td></tr></tbody></table></div>
+</section>
+
+<section id="gear">
+  <h2>Gear</h2>
+  <div class="card"><ul><li>Leather armor (worn)</li><li>Shield (paint your star map on it!)</li><li>Quarterstaff, your druidic focus</li><li>Sickle</li><li>Spear</li><li>Light Crossbow, quiver, and 20 bolts</li><li>Explorer's Pack: backpack, bedroll, 2 flasks of oil, 10 days of rations, 50 ft of rope, tinderbox, 10 torches, waterskin</li><li>Herbalism Kit</li><li>Gaming set (dice)</li><li>Hooded lantern</li><li>Manacles</li><li>Traveler's clothes</li><li>21 gold pieces</li><li>Need for Revivify: a diamond worth 300 GP (you don't have one)</li></ul>
+  <p><b>Tools you can use:</b> Herbalism Kit, Dice set. Add your proficiency (+3) to checks with them.</p>
+  <p><b>Languages:</b> Common, Gnomish, Goblin, Druidic.</p></div>
+</section>
+
+<section id="you">
+  <h2>Who you are</h2>
+  <div class="card"><p><b>Personality:</b> On the smaller side. Maybe dabbles in necromancy.</p><p><b>Why he's here:</b> "I married a nerd. This is my life now. Send help."</p></div>
+</section>
+
+<section id="rules">
+  <h2>Rules help</h2>
+  <details><summary><span class="sname">Rolling: checks, saves, attacks</span></summary><div class="sbody">
+    <p>Almost everything is a <b>d20 roll + a number</b>, trying to reach a target the DM knows:</p>
+    <ul><li><b>Ability check</b> (a skill): d20 + the skill number. Target is a DC (Difficulty Class): 10 easy, 15 medium, 20 hard.</li>
+    <li><b>Saving throw</b>: d20 + the save number, to resist something.</li>
+    <li><b>Attack roll</b>: d20 + to-hit number, against the target's Armor Class.</li></ul>
+    <p><b>Advantage:</b> roll two d20s and use the <b>higher</b>. <b>Disadvantage:</b> roll two and use the <b>lower</b>. If you have both, they cancel out: roll one.</p>
+    <p><b>Natural 20</b> on an attack always hits and is a critical hit. <b>Natural 1</b> on an attack always misses.</p>
+  </div></details>
+  <details><summary><span class="sname">Your turn: what you can do</span></summary><div class="sbody">
+    <p>On your turn: <b>move</b> (up to your speed, and you can split it up before and after your action), take <b>one Action</b>, and take a <b>Bonus Action</b> only if a spell or feature says it uses one. Talking a little is free.</p>
+    <p><b>Actions anyone can take:</b></p>
+    <ul><li><b>Attack</b>: swing or shoot a weapon.</li><li><b>Magic</b>: cast a spell or use a magic feature.</li><li><b>Dash</b>: move your speed again.</li><li><b>Disengage</b>: move away without enemies getting free hits.</li><li><b>Dodge</b>: attacks against you have disadvantage until your next turn, and you have advantage on Dexterity saves.</li><li><b>Help</b>: give a friend advantage on their next check or attack.</li><li><b>Hide</b>: Dexterity (Stealth) check to become hidden.</li><li><b>Search</b> / <b>Study</b>: look for something (Wisdom) or figure something out (Intelligence).</li><li><b>Influence</b>: persuade, deceive or intimidate someone.</li><li><b>Ready</b>: pick a trigger ("when the door opens, I cast Fire Bolt") and react when it happens.</li><li><b>Utilize</b>: use an object (drink a potion, pull a lever, use a Healer's Kit).</li></ul>
+    <p><b>Reaction</b> (one per round, even on others' turns): spells like Shield, or an <b>Opportunity Attack</b>, which means one free melee attack when an enemy next to you moves away.</p>
+  </div></details>
+  <details><summary><span class="sname">Hit Points, dropping to 0, and death saves</span></summary><div class="sbody">
+    <p>Damage lowers your HP. <b>Temporary HP</b> absorbs damage first and doesn't stack. At <b>0 HP</b> you fall unconscious.</p>
+    <p>At the start of each of your turns at 0 HP, roll a <b>death saving throw</b>: a plain d20, nothing added. <b>10 or higher</b> = a success, <b>9 or lower</b> = a failure. <b>3 successes</b>: you're stable. <b>3 failures</b>: you die. A <b>natural 20</b>: you wake up with 1 HP. A <b>natural 1</b>: two failures. Taking damage while at 0 = one failure (a critical hit = two).</p>
+    <p><b>Any healing at all wakes you up.</b> That's why Healing Word matters so much. A friend can also stabilize you with a DC 10 Wisdom (Medicine) check.</p>
+  </div></details>
+  <details><summary><span class="sname">Resting</span></summary><div class="sbody">
+    <p><b>Short Rest</b> (1 hour of downtime): spend Hit Dice to heal. Roll a d8, add your Constitution modifier (+2), and heal that much, as many times as you have Hit Dice left. Some features come back too (it says so on each one).</p>
+    <p><b>Long Rest</b> (8 hours, a night's sleep): get back <b>all</b> your HP, all spent Hit Dice, all spell slots and all once-per-day features. Only one Long Rest per day.</p>
+  </div></details>
+  <details><summary><span class="sname">Conditions (what they mean)</span></summary><div class="sbody">
+    <ul><li><b>Blinded:</b> you can't see; your attacks have disadvantage, attacks against you have advantage.</li>
+    <li><b>Charmed:</b> you can't attack the charmer, and it has advantage when it talks to you.</li>
+    <li><b>Frightened:</b> disadvantage on checks and attacks while you can see the source; you can't move closer to it.</li>
+    <li><b>Grappled:</b> speed 0; you can try to escape with an Athletics or Acrobatics check as your action.</li>
+    <li><b>Incapacitated:</b> you can't take actions, bonus actions or reactions; concentration breaks.</li>
+    <li><b>Invisible:</b> attacks against you have disadvantage, yours have advantage.</li>
+    <li><b>Paralyzed:</b> Incapacitated, can't move or speak; hits from within 5 feet are critical hits.</li>
+    <li><b>Poisoned:</b> disadvantage on attack rolls and ability checks.</li>
+    <li><b>Prone:</b> lying down. Standing up costs half your speed. Your attacks have disadvantage; melee attacks against you have advantage, ranged ones disadvantage.</li>
+    <li><b>Restrained:</b> speed 0; your attacks and Dexterity saves have disadvantage; attacks against you have advantage.</li>
+    <li><b>Unconscious:</b> Incapacitated, Prone, drop what you're holding; hits from within 5 feet are critical hits.</li></ul>
+  </div></details>
+  <details><summary><span class="sname">Cover, range, light</span></summary><div class="sbody">
+    <p><b>Half cover</b> (behind a low wall or another creature): +2 AC and Dex saves. <b>Three-quarters cover</b> (arrow slit, thick tree): +5. <b>Total cover</b>: can't be targeted.</p>
+    <p>Ranged attacks at <b>long range</b> (the second number, like 80/320) have disadvantage. So do ranged attacks while an enemy is right next to you.</p>
+    <p><b>Dim light</b>: disadvantage on Perception checks that rely on sight. <b>Darkness</b>: effectively blind, unless you have Darkvision, which treats darkness as dim light.</p>
+  </div></details>
+</section>
+
+<footer>Built for the Lantern Fair. No rolling here: grab your real dice. Questions? Ask your DM.</footer>
+</div>
+<script>
+(function(){
+  function get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function set(k,v){ try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k,v); } catch(e){} }
+  var boxes = document.querySelectorAll('input[type=checkbox][data-k]');
+  boxes.forEach(function(b){ b.checked = get(b.dataset.k) === '1'; b.addEventListener('change', function(){ set(b.dataset.k, b.checked ? '1' : null); }); });
+  var nums = document.querySelectorAll('input[type=number][data-k]');
+  nums.forEach(function(n){ var v = get(n.dataset.k); if (v !== null) n.value = v; n.addEventListener('input', function(){ set(n.dataset.k, n.value); }); });
+  document.getElementById('reset').addEventListener('click', function(){
+    if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
+    boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });
+    nums.forEach(function(n){ n.value = n.defaultValue; set(n.dataset.k, null); });
+  });
+})();
+</script>
+</body>
+</html>
