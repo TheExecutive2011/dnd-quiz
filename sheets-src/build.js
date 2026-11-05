@@ -5,7 +5,7 @@ const path = require('path');
 const SPELLS = require('./spells.js');
 const CHARS = require('./chars.js');
 const OUT = process.argv[2];
-const ACCENT_DARK = {"#c4622d": "#ec8d5e", "#b8432f": "#f07b66", "#3d5ba8": "#8ea8ec", "#4f7a3a": "#93c577", "#2b7a8c": "#63c0d4", "#7a4aa8": "#bb92e6"};
+const ACCENT_DARK = {"#b0458a": "#e48cc4", "#c4622d": "#ec8d5e", "#b8432f": "#f07b66", "#3d5ba8": "#8ea8ec", "#4f7a3a": "#93c577", "#2b7a8c": "#63c0d4", "#7a4aa8": "#bb92e6"};
 if (!OUT) throw new Error('usage: node build.js <site repo dir>');
 
 const PROF = 3;
@@ -70,7 +70,8 @@ function spellCard(name, c, tag, override, fullSrc, free) {
   const atk = (override && override.atk) || PROF + m;
   const v = { dc, atk: atk, mod: m, mageArmor: c.mageArmor };
   const flags = [s.conc ? '<span class="pill conc">Concentration</span>' : '', s.ritual ? '<span class="pill rit">Ritual</span>' : '', tag ? `<span class="pill src">${esc(tag)}</span>` : ''].join('');
-  const cast = s.lvl > 0 ? `<button type="button" class="cast" data-level="${s.lvl}"${free ? ` data-free="${free.key}"` : ''}${free && free.freeOnly ? ' data-freeonly="1"' : ''}>Cast</button>` : '';
+  const ritualOnly = override && override.ritualOnly;
+  const cast = s.lvl > 0 && !ritualOnly ? `<button type="button" class="cast" data-level="${s.lvl}"${free ? ` data-free="${free.key}"` : ''}${free && free.freeOnly ? ' data-freeonly="1"' : ''}>Cast</button>` : '';
   const freeRow = free ? `<div class="freerow"><span class="fl">Free casts${free.freeOnly ? '' : ' (used first)'}</span><span class="boxes">${boxes(c.slug, free.key, free.count, 'sm')}</span></div>` : '';
   return `<div class="spell">
 <div class="shead"><div class="sh"><span class="sname">${esc(name)}</span><span class="smeta">${s.time.split(',')[0]} · ${esc(s.range.split(',')[0])}</span>${flags}</div>${cast}</div>
@@ -108,7 +109,8 @@ function page(c) {
     const sv = m[k] + (c.saves.includes(k) ? PROF : 0);
     return `<tr><td><b>${AB[k]}</b><div class="use">${AB_USE[k]}</div></td><td class="num">${c.abilities[k]}</td><td class="num">${sg(m[k])}</td><td class="num ${c.saves.includes(k) ? 'hi' : ''}">${sg(sv)}${c.saves.includes(k) ? '<span class="dot" title="proficient">●</span>' : ''}</td></tr>`;
   }).join('');
-  const isCaster = c.prepared && c.prepared.length;
+  const isCaster = (c.prepared && c.prepared.length) || Object.keys(c.always || {}).length;
+  const hasSlots = c.slots && c.slots.length;
   const freeBy = {}; (c.free || []).forEach((f) => { if (f.spell) freeBy[f.spell] = f; });
   const freeT = (c.free || []).filter((f) => !f.spell).map((f) => tracker(f.key, f.label, f.count, c.slug)).join('');
   const featT = c.features.filter((f) => f.track).map((f) => tracker(f.track.key, f.track.label, f.track.count, c.slug)).join('');
@@ -122,7 +124,7 @@ function page(c) {
     const list = c.prepared.filter((n) => SPELLS[n].lvl === l);
     if (!nSlots && !ex.length && !list.length) return '';
     const cards = list.map((n) => spellCard(n, c, null, null, null, freeBy[n])).join('') + ex.map((e) => spellCard(e.n, c, short(e.o.src), e.o, e.o.src, freeBy[e.n])).join('');
-    return `<div class="lvlgrp" data-level="${l}"><div class="lvlhead"><h3 class="lvl">${LVL[l]} spells</h3><div class="slotbox"><span class="fl">${nSlots} slots</span><span class="boxes">${boxes(c.slug, 'slot' + l, nSlots)}</span></div></div>${cards}</div>`;
+    return `<div class="lvlgrp" data-level="${l}"><div class="lvlhead"><h3 class="lvl">${LVL[l]} spells</h3>${nSlots ? `<div class="slotbox"><span class="fl">${nSlots} slots</span><span class="boxes">${boxes(c.slug, 'slot' + l, nSlots)}</span></div>` : ''}</div>${cards}</div>`;
   }).join('');
   const forms = (c.forms || []).map((f) => { const b = FORMS[f]; return `<div class="form"><h4>${f} <span class="muted">${b.size}</span></h4><p><b>AC</b> ${b.ac} · <b>Speed</b> ${b.speed}</p><p>${b.atk}</p><p class="muted">${b.notes}</p></div>`; }).join('');
   const feats = c.features.map((f) => `<details class="feat"><summary><span class="sh"><span class="sname">${esc(f.name)}</span><span class="pill type">${esc(f.type)}</span></span></summary><div class="sbody"><p class="muted small">${esc(f.src)}${f.uses ? ' · ' + esc(f.uses) : ''}</p>${f.text}</div></details>`).join('');
@@ -283,8 +285,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
     <div class="stat"><div class="k">Initiative</div><div class="v">${sg(c.init)}</div><div class="n">${esc(c.initNote)}</div></div>
     <div class="stat"><div class="k">Proficiency</div><div class="v">+3</div><div class="n">Added to things you're trained in</div></div>
     <div class="stat"><div class="k">Passive Perception</div><div class="v">${percep}</div><div class="n">What you notice without rolling</div></div>
-    <div class="stat"><div class="k">Spell Save DC</div><div class="v">${dc}</div><div class="n">What enemies roll against</div></div>
-    <div class="stat"><div class="k">Spell Attack</div><div class="v">${sg(satk)}</div><div class="n">Add to d20 for spell attacks</div></div>
+    ${c.tiles ? c.tiles.map((t) => `<div class="stat"><div class="k">${esc(t[0])}</div><div class="v">${esc(t[1])}</div><div class="n">${esc(t[2])}</div></div>`).join('') : `<div class="stat"><div class="k">Spell Save DC</div><div class="v">${dc}</div><div class="n">What enemies roll against</div></div>
+    <div class="stat"><div class="k">Spell Attack</div><div class="v">${sg(satk)}</div><div class="n">Add to d20 for spell attacks</div></div>`}
   </div>
 </header>
 <nav aria-label="Jump to"><a href="#hp">Hit Points</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a>${isCaster ? '<a href="#spells">Spells</a>' : ''}<a href="#features">Abilities</a>${c.forms ? '<a href="#forms">Animal forms</a>' : ''}<a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
@@ -333,12 +335,12 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 ${isCaster ? `<section id="spells">
   <h2>Spells</h2>
   <div class="callout">
-    <p><b>How your magic works.</b> <b>Cantrips</b> are free: cast them as often as you like. Every other spell uses up a <b>spell slot</b> of its level or higher. You have <b>${c.slots.map((n, i) => `${n} ${LVL[i + 1]}`).join(', ')}</b> slots, and you get them all back after a Long Rest. Casting a spell with a higher slot than needed usually makes it stronger.</p>
-    <p><b>Spell attack:</b> d20 ${sg(satk).replace('+', '+ ')}. <b>Spell save DC:</b> ${dc}. When a spell says "save", the <i>target</i> rolls and needs ${dc} or more to resist.</p>
+    ${c.spellNote ? `<p>${c.spellNote}</p>` : `<p><b>How your magic works.</b> <b>Cantrips</b> are free: cast them as often as you like. Every other spell uses up a <b>spell slot</b> of its level or higher. You have <b>${c.slots.map((n, i) => `${n} ${LVL[i + 1]}`).join(', ')}</b> slots, and you get them all back after a Long Rest. Casting a spell with a higher slot than needed usually makes it stronger.</p>
+    <p><b>Spell attack:</b> d20 ${sg(satk).replace('+', '+ ')}. <b>Spell save DC:</b> ${dc}. When a spell says "save", the <i>target</i> rolls and needs ${dc} or more to resist.</p>`}
     <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 ${sg(m.con + (c.saves.includes('con') ? PROF : 0)).replace('+', '+ ')}) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
-    <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
+    ${hasSlots ? `<p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>` : ''}
   </div>
-  <p class="muted">Tap <b>Cast</b> to tick off a slot. Tap a ticked box to undo it.</p>
+  <p class="muted">Tap <b>Cast</b> to tick off ${hasSlots ? 'a slot' : 'a free cast'}. Tap a ticked box to undo it.</p>
   ${cantrips ? `<div class="lvlgrp"><div class="lvlhead"><h3 class="lvl">Cantrips</h3><span class="fl">Free, no slots</span></div>${cantrips}</div>` : ''}
   ${byLvl}
 </section>` : ''}

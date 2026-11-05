@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg">
+<title>Gwen · Character Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,50&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:#b0458a; --soft:#e3e7ef; --conc:#8a5a00; --down:#b3261e; --good:#2e7d4a; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --down:#ff8a7a; --good:#7cc98f; --soft:#262b3c; --accent:#e48cc4; --conc:#f0b44a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --down:#ff8a7a; --good:#7cc98f; --soft:#262b3c; --accent:#e48cc4; --conc:#f0b44a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 80px; }
+body::before { content:""; position:fixed; inset:0 0 auto; height: env(safe-area-inset-top, 0px); z-index:10; background: var(--bg); }
+a:focus-visible, summary:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.wrap { max-width: 820px; margin: 0 auto; }
+h1,h2,h3 { font-family:var(--display); margin:0; text-wrap:balance; }
+h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); line-height:1.05; }
+h2 { font-size: 1.5rem; margin-bottom: 4px; }
+h4 { margin: 0; font-size: 1rem; }
+p { margin: 0 0 8px; } p:last-child { margin-bottom: 0; }
+ul { margin: 4px 0 8px; padding-left: 20px; } li { margin-bottom: 6px; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+header { padding: 32px 0 12px; border-bottom: 4px solid var(--accent); margin-bottom: 8px; }
+.eyebrow { font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.line { font-weight: 700; color: var(--accent); margin-top: 4px; }
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display:flex; gap:6px; overflow-x:auto; padding: 10px 0; border-bottom: 1px solid var(--line); }
+nav a { flex:none; font-size:.85rem; font-weight:700; color:var(--fg); text-decoration:none; padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:var(--panel); }
+section { margin-top: 32px; scroll-margin-top: 64px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:10px; }
+.stats { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; margin-top: 14px; }
+@media (min-width: 640px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 12px; min-width:0; }
+.stat .k { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.stat .v { font-family:var(--display); font-size:1.8rem; font-weight:700; line-height:1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat .n { font-size:.8rem; color:var(--muted); line-height:1.3; }
+table { width:100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align: top; }
+th { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+td.num { font-variant-numeric: tabular-nums; font-weight:700; white-space:nowrap; font-size:1.05rem; }
+td.hi { color: var(--accent); }
+.dot { font-size:.6rem; margin-left:4px; vertical-align: 2px; }
+tr.prof td:first-child b { color: var(--accent); }
+.use { font-size:.83rem; color:var(--muted); line-height:1.35; margin-top:2px; }
+.scroll { overflow-x:auto; }
+dl.turn { margin: 10px 0 0; display:grid; gap: 14px; }
+.turn .tr { display:grid; gap: 2px; }
+.turn dt { font-weight:700; color: var(--accent); }
+.turn dd { margin:0; }
+@media (min-width: 640px) { .turn .tr { grid-template-columns: 13rem 1fr; gap: 16px; } }
+.atks { list-style:none; margin: 10px 0 0; padding:0; display:grid; gap:8px; }
+.atk { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:grid; gap:8px; min-width:0; margin:0; }
+.atk.add { background: var(--soft); border-style: dashed; }
+.aname { font-family: var(--body); font-size: 1.02rem; margin:0; }
+.kvs { display:flex; flex-wrap:wrap; gap: 6px 22px; }
+.kv { display:grid; min-width:0; }
+.kv .k { font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.kv .v { font-weight:700; font-size:1.05rem; font-variant-numeric: tabular-nums; }
+.kv .v.r { font-weight:400; font-size:.95rem; }
+.atk .use { margin:0; }
+.chip { display:inline-block; font-size:.68rem; font-weight:700; padding:1px 7px; border-radius:999px; background: var(--soft); color: var(--fg); vertical-align: 1px; }
+th.numh { text-align:right; } td.num { text-align:right; }
+.from { font-size:.85rem; color: var(--muted); }
+.lvlgrp { margin-top: 18px; display:grid; gap: 8px; }
+.lvlhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap: 8px 16px; padding: 10px 0 6px; border-bottom: 2px solid var(--accent); }
+h3.lvl { font-family: var(--display); font-size: 1.25rem; margin:0; }
+.slotbox { display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
+.fl { font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.spell { background:var(--panel); border:1px solid var(--line); border-radius:12px; min-width:0; }
+.spell > details { background: transparent; border:0; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; margin:0; }
+.spell > details > summary { padding: 8px 14px; }
+.more { font-size:.88rem; font-weight:700; color: var(--muted); }
+.shead { display:grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; align-items:center; padding: 12px 14px; }
+.freerow { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding: 0 14px 10px; }
+.box.sm span { width:24px; height:24px; border-radius:6px; }
+button.cast { font: inherit; font-weight:700; font-size:.95rem; padding: 8px 16px; border-radius: 10px; border: 0; background: var(--accent); color: var(--bg); cursor:pointer; min-height: 40px; }
+button.cast:active { transform: translateY(1px); }
+.castmsg { margin:0; padding: 0 14px; font-size:.88rem; font-weight:700; color: var(--accent); }
+.castmsg:empty { display:none; }
+.castmsg:not(:empty) { padding-bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { button.cast:active { transform:none; } }
+header > p, section > p, .callout p { max-width: 68ch; }
+details { background:var(--panel); border:1px solid var(--line); border-radius:12px; margin-top:8px; }
+summary { cursor:pointer; padding:12px 14px; display:grid; grid-template-columns: minmax(0, 1fr) auto; align-items:start; gap:10px; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+summary .sh, .shead .sh { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; min-width:0; }
+summary::after { content:"+"; font-weight:700; color:var(--muted); font-size:1.2rem; line-height:1.2; }
+details[open] summary::after { content:"−"; }
+.sname { font-weight:700; font-size:1.02rem; }
+.smeta { font-size:.82rem; color:var(--muted); }
+.sbody { padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.facts { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:6px 14px; margin:0 0 10px; font-size:.88rem; }
+.facts dt { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; } .facts dd { margin:0; }
+.roll { background: var(--soft); padding: 8px 12px; border-radius: 8px; }
+.roll b { color: var(--accent); }
+.pill { display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+.pill.conc { color: var(--conc); border-color: var(--conc); } .pill.rit { color: var(--accent); border-color: var(--accent); }
+.pill.type { color: var(--accent); border-color: var(--accent); }
+h4.lvl { margin-top: 18px; font-family: var(--display); font-size: 1.15rem; }
+.callout { background: var(--soft); border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+.forms { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:8px; margin-top:8px; }
+.form { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; font-size:.92rem; }
+.form h4 { font-family: var(--display); font-size: 1.1rem; margin-bottom: 4px; }
+.trk { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); flex-wrap: wrap; }
+.trk:last-child { border-bottom: 0; }
+.boxes { display:flex; gap:6px; flex-wrap: wrap; }
+.box input { position:absolute; opacity:0; width:1px; height:1px; }
+.box span { display:block; width:30px; height:30px; border:2px solid var(--accent); border-radius:8px; cursor:pointer; }
+.box input:checked + span { background: var(--accent); }
+.box input:focus-visible + span { outline: 3px solid var(--fg); outline-offset: 2px; }
+button.reset { font: inherit; font-weight:700; padding:10px 14px; border-radius:10px; border:1px solid var(--accent); background:var(--panel); color:var(--fg); cursor:pointer; margin-top:10px; }
+.hpcard { display:grid; gap:10px; }
+.hpnow { display:flex; align-items:baseline; gap: 8px 14px; flex-wrap: wrap; }
+.hpbig { font-family: var(--display); font-size: 3rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.hpmax { font-size: 1.4rem; color: var(--muted); }
+.hptemp { font-weight:700; padding: 2px 10px; border-radius: 999px; background: var(--soft); }
+.hpbar { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.hpbar span { display:block; height:100%; width:100%; background: var(--accent); border-radius: 999px; transition: width .25s; }
+.hpstate { margin:0; font-weight:700; }
+.hpstate:empty { display:none; }
+.hpstate.down { color: var(--down); }
+.hpctl { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; align-items:end; }
+.hpctl .fl { grid-column: 1 / -1; }
+.hpctl input { grid-column: 1 / -1; font: inherit; font-size:1.5rem; font-weight:700; padding:8px 12px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color: var(--fg); min-width:0; }
+@media (min-width: 640px) { .hpctl { grid-template-columns: 8rem repeat(4, auto); justify-content: start; } .hpctl .fl { grid-column: 1 / -1; } .hpctl input { grid-column: auto; } }
+.hpbtn { font: inherit; font-weight:700; padding: 10px 14px; border-radius:10px; min-height: 44px; cursor:pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
+.hpbtn.dmg { background: var(--down); border-color: var(--down); color: var(--bg); }
+.hpbtn.heal { background: var(--good); border-color: var(--good); color: var(--bg); }
+.hpbtn:disabled { opacity: .45; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .hpbar span { transition: none; } }
+footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
+@media print { nav, button.reset { display:none; } details { break-inside: avoid; } details:not([open]) .sbody { display:block; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Character sheet · Level 5 · she/her</p>
+  <h1>Gwen</h1>
+  <p class="line">Fairy Barbarian · Path of the Wild Heart · Farmer</p>
+  <div class="stats">
+    <div class="stat"><div class="k">Armor Class</div><div class="v">14</div><div class="n">No armor: 10 + Dex (+1) + Con (+3).</div></div>
+    <div class="stat"><div class="k">Hit Points</div><div class="v">65</div><div class="n">Maximum. Hit Dice: 5 × d12</div></div>
+    <div class="stat"><div class="k">Speed</div><div class="v">40 ft</div><div class="n">Small · Fly 40 ft</div></div>
+    <div class="stat"><div class="k">Initiative</div><div class="v">+1</div><div class="n">Dex +1</div></div>
+    <div class="stat"><div class="k">Proficiency</div><div class="v">+3</div><div class="n">Added to things you're trained in</div></div>
+    <div class="stat"><div class="k">Passive Perception</div><div class="v">14</div><div class="n">What you notice without rolling</div></div>
+    <div class="stat"><div class="k">Rage damage</div><div class="v">+2</div><div class="n">Added to Strength attacks while raging</div></div><div class="stat"><div class="k">Rages</div><div class="v">3</div><div class="n">Per Long Rest. 1 comes back after a Short Rest</div></div>
+  </div>
+</header>
+<nav aria-label="Jump to"><a href="#hp">Hit Points</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a><a href="#spells">Spells</a><a href="#features">Abilities</a><a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+
+<section id="hp">
+  <h2>Hit Points</h2>
+  <div class="card hpcard">
+    <div class="hpnow"><span class="hpbig"><span id="hpcur">65</span><span class="hpmax"> / 65</span></span><span class="hptemp" id="hptemp" hidden>+<span id="hptempn">0</span> temporary</span></div>
+    <div class="hpbar" aria-hidden="true"><span id="hpfill"></span></div>
+    <p class="hpstate" id="hpstate" role="status" aria-live="polite"></p>
+    <div class="hpctl">
+      <label for="hpamt" class="fl">Amount</label>
+      <input id="hpamt" type="number" inputmode="numeric" min="0" placeholder="0">
+      <button type="button" class="hpbtn dmg" data-act="dmg">Damage</button>
+      <button type="button" class="hpbtn heal" data-act="heal">Heal</button>
+      <button type="button" class="hpbtn tmp" data-act="tmp">Temp HP</button>
+      <button type="button" class="hpbtn undo" id="hpundo" disabled>Undo</button>
+    </div>
+    <p class="muted small">Type a number, then tap a button. Damage comes off temporary HP first. Healing can't go above 65. Temporary HP doesn't add up: you keep whichever is higher.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="callout">
+    <p><b>How to read this page.</b> When the DM asks you to roll, it's almost always a <b>d20</b> (the 20-sided die) plus a number from this page. "d20 + 7" means roll the d20 and add 7. Tell the DM the total. Damage is written like <b>2d10 + 4</b>: roll two 10-sided dice, add them up, then add 4. Tap any spell or ability below to open the full explanation. There's a <a href="#rules">rules help</a> section at the bottom.</p>
+  </div>
+</section>
+
+
+<section id="track">
+  <h2>Tracker</h2>
+  <p class="muted">Tap a box when you use something. Spell slots are in the Spells section. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
+  <div class="card">
+    <div class="trk"><span class="tl">Rages</span><span class="boxes"><label class="box"><input type="checkbox" data-k="gwen2:rage:0"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:rage:1"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:rage:2"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d12) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="gwen2:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:hd:4"><span></span></label></span></div>
+    <div class="trk"><span class="tl">Death saves: successes</span><span class="boxes"><label class="box"><input type="checkbox" data-k="gwen2:ds:0"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:ds:1"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:ds:2"><span></span></label></span></div><div class="trk"><span class="tl">Death saves: failures</span><span class="boxes"><label class="box"><input type="checkbox" data-k="gwen2:df:0"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:df:1"><span></span></label><label class="box"><input type="checkbox" data-k="gwen2:df:2"><span></span></label></span></div>
+    <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
+  </div>
+</section>
+
+<section id="attacks">
+  <h2>Attacks</h2>
+  <p class="muted">"To hit" means roll a d20 and add that number. The DM tells you if it beats the target's Armor Class. If it hits, roll the damage. <b>Rolled a natural 20</b> (the die shows 20)? That's a <b>critical hit</b>: roll all the damage dice twice and add the bonus once.</p>
+  <ul class="atks"><li class="atk"><h3 class="aname">Greataxe</h3><div class="kvs"><div class="kv"><span class="k">To hit</span><span class="v">d20 + 6</span></div><div class="kv"><span class="k">Damage</span><span class="v">1d12 + 3 Slashing (+2 while raging)</span></div><div class="kv"><span class="k">Range</span><span class="v r">Melee (5 ft)</span></div></div><p class="use">Two hands. Mastery (Cleave): once per turn, when you hit, you can attack a second creature within 5 feet of the first. That second hit deals 1d12 (no +3, but +2 if raging).</p></li><li class="atk"><h3 class="aname">Handaxe</h3><div class="kvs"><div class="kv"><span class="k">To hit</span><span class="v">d20 + 6</span></div><div class="kv"><span class="k">Damage</span><span class="v">1d6 + 3 Slashing (+2 while raging)</span></div><div class="kv"><span class="k">Range</span><span class="v r">Melee, or thrown 20/60 ft</span></div></div><p class="use">You have four. Light. Mastery (Vex): when you hit and deal damage, your next attack against that creature before the end of your next turn has advantage.</p></li></ul>
+</section>
+
+<section id="spells">
+  <h2>Spells</h2>
+  <div class="callout">
+    <p><b>How your magic works.</b> You have no spell slots. Your fairy magic lets you cast <b>Faerie Fire</b> and <b>Enlarge/Reduce</b> once each per Long Rest. Your Wild Heart spells can only be cast as <b>rituals</b>: they take 10 minutes longer and use nothing. <b>Spell save DC:</b> 12. <b>While you are raging you can't cast spells</b>, and starting a Rage ends any spell you are concentrating on.</p>
+    <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 + 6) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
+    
+  </div>
+  <p class="muted">Tap <b>Cast</b> to tick off a free cast. Tap a ticked box to undo it.</p>
+  <div class="lvlgrp"><div class="lvlhead"><h3 class="lvl">Cantrips</h3><span class="fl">Free, no slots</span></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Druidcraft</span><span class="smeta">Action · 30 feet</span><span class="pill src">Fairy</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> Fairy</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Small nature tricks with no combat use: predict the weather for the next 24 hours, make a flower bloom or a seed sprout, make a harmless sensory effect like falling leaves or a puff of wind, or light or snuff out a candle or small campfire.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details></div></div>
+  <div class="lvlgrp" data-level="1"><div class="lvlhead"><h3 class="lvl">1st level spells</h3></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Faerie Fire</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span><span class="pill src">Fairy Magic</span></div><button type="button" class="cast" data-level="1" data-free="ff" data-freeonly="1">Cast</button></div>
+<div class="freerow"><span class="fl">Free casts</span><span class="boxes"><label class="box sm"><input type="checkbox" data-k="gwen2:ff:0" aria-label="ff 1"><span></span></label></span></div><p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> Fairy Magic: once free per Long Rest</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>60 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Glowing light outlines everything in a 20-foot cube. Each creature in it makes a Dexterity save. If it fails, it glows (dim light, 10 feet), can't be Invisible, and every attack roll against it has advantage. That helps your whole party hit it.</p>
+<p class="roll"><b>What to roll:</b> Each creature rolls a Dexterity save against DC 12.</p>
+
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Speak with Animals</span><span class="smeta">Action · Yourself</span><span class="pill rit">Ritual</span><span class="pill src">Wild Heart</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> Wild Heart (Animal Speaker): ritual only</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action, or 10 minutes longer as a ritual (no slot used)</dd></div><div><dt>Range</dt><dd>Yourself</dd></div><div><dt>Lasts</dt><dd>10 minutes</dd></div></dl>
+<p>For 10 minutes you can understand and talk with Beasts (normal animals). Most animals only know about their immediate area: who passed by, where food is, what scared them. Cast as a ritual, it takes 10 minutes longer and uses no spell slot.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll. Your DM might ask for a Wisdom (Animal Handling) or Charisma check to convince one to help.</p>
+
+</div></details></div></div><div class="lvlgrp" data-level="2"><div class="lvlhead"><h3 class="lvl">2nd level spells</h3></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Enlarge/Reduce</span><span class="smeta">Action · 30 feet</span><span class="pill conc">Concentration</span><span class="pill src">Fairy Magic</span></div><button type="button" class="cast" data-level="2" data-free="er" data-freeonly="1">Cast</button></div>
+<div class="freerow"><span class="fl">Free casts</span><span class="boxes"><label class="box sm"><input type="checkbox" data-k="gwen2:er:0" aria-label="er 1"><span></span></label></span></div><p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> Fairy Magic: once free per Long Rest</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>30 feet</dd></div><div><dt>Lasts</dt><dd>1 minute (concentration)</dd></div></dl>
+<p>Pick a creature or object you can see. <b>Enlarge:</b> it grows one size bigger (Small becomes Medium, Medium becomes Large). It has advantage on Strength checks and Strength saving throws, and its weapon attacks deal an extra 1d4 damage. <b>Reduce:</b> it shrinks one size. It has disadvantage on Strength checks and Strength saving throws, and its weapon attacks deal 1d4 less damage. Everything it wears and carries changes size with it. An unwilling creature can make a Constitution save to resist.</p>
+<p class="roll"><b>What to roll:</b> Unwilling target rolls a Constitution save against DC 12. Enlarged attacks: add 1d4 to damage.</p>
+
+</div></details></div><div class="spell">
+<div class="shead"><div class="sh"><span class="sname">Beast Sense</span><span class="smeta">Ritual (10 minutes) · Touch</span><span class="pill conc">Concentration</span><span class="pill rit">Ritual</span><span class="pill src">Wild Heart</span></div></div>
+<p class="castmsg" role="status" aria-live="polite"></p>
+<details><summary><span class="sh"><span class="more">What it does</span></span></summary>
+<div class="sbody"><p class="from"><b>Where it comes from:</b> Wild Heart (Animal Speaker): ritual only</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Ritual (10 minutes)</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>1 hour (concentration)</dd></div></dl>
+<p>Touch a willing Beast (a normal animal). For the duration, you can see, hear and smell what it does, as well as with your own senses, including any special senses it has, like darkvision.</p>
+<p class="roll"><b>What to roll:</b> Nothing to roll.</p>
+
+</div></details></div></div>
+</section>
+
+<section id="features">
+  <h2>Abilities and traits</h2>
+  <p class="muted">Everything your class, species and background give you. Tap to read what it does.</p>
+  <details class="feat"><summary><span class="sh"><span class="sname">Rage</span><span class="pill type">Bonus Action</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 1 · 3 per Long Rest. You get 1 back when you finish a Short Rest.</p><p>While raging:</p><ul><li>You take <b>half damage</b> from Bludgeoning, Piercing and Slashing damage. With the Bear spirit (below), that becomes almost every damage type.</li><li>Your Strength attacks (greataxe, handaxe) deal <b>+2 damage</b>.</li><li>You have <b>advantage on Strength checks and Strength saving throws</b>.</li><li>You <b>can't cast spells</b>, and you can't concentrate on a spell. Starting a Rage ends any spell you are concentrating on.</li></ul><p><b>How long it lasts:</b> until the end of your next turn. On that turn it keeps going if you attack an enemy, force an enemy to make a saving throw, or spend a Bonus Action to keep it going. It can last up to 10 minutes. It ends early if you are Incapacitated.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Rage of the Wilds</span><span class="pill type">When you start a Rage</span></span></summary><div class="sbody"><p class="muted small">Wild Heart, level 3</p><p>Every time you start a Rage, pick one animal spirit for that Rage:</p><ul><li><b>Bear:</b> you take <b>half damage from every damage type</b> except Force, Necrotic, Psychic and Radiant.</li><li><b>Eagle:</b> when you start the Rage you can also Dash and Disengage as part of that same Bonus Action. For the rest of the Rage you can Dash and Disengage together as a Bonus Action.</li><li><b>Wolf:</b> your allies have <b>advantage</b> on attack rolls against any enemy within 5 feet of you.</li></ul></div></details><details class="feat"><summary><span class="sh"><span class="sname">Unarmored Defense</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 1</p><p>When you aren't wearing armor, your Armor Class is <b>10 + Dexterity modifier + Constitution modifier</b>: 10 + 1 + 3 = <b>14</b>. A shield would add +2 on top.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Weapon Mastery</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 1</p><p>You can use the special tricks of your weapons:</p><ul><li><b>Greataxe: Cleave.</b> Once per turn, when you hit a creature with the greataxe, you can make one more attack roll with it against a different creature within 5 feet of the first one. If that hits, it takes 1d12 damage, plus 2 if you are raging (you don't add your +3).</li><li><b>Handaxe: Vex.</b> When you hit a creature with a handaxe and deal damage, your next attack roll against that same creature before the end of your next turn has advantage.</li></ul></div></details><details class="feat"><summary><span class="sh"><span class="sname">Danger Sense</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 2</p><p>You have <b>advantage on Dexterity saving throws</b> (like dodging a fireball or a falling rock), unless you are Incapacitated.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Reckless Attack</span><span class="pill type">Your choice, on your first attack</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 2</p><p>When you make your first attack roll on your turn, you can decide to attack recklessly. If you do, your Strength attacks have <b>advantage</b> until the start of your next turn, but attacks <b>against you</b> also have advantage until then.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Primal Knowledge</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 3</p><p>You are trained in <b>Perception</b> (already in your skills). While you are raging, you can use <b>Strength</b> instead of the normal ability for Acrobatics, Intimidation, Perception, Stealth and Survival checks. For example, Intimidation while raging is d20 + 6 instead of d20 + 3.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Animal Speaker</span><span class="pill type">Ritual</span></span></summary><div class="sbody"><p class="muted small">Wild Heart, level 3</p><p>You can cast <b>Speak with Animals</b> and <b>Beast Sense</b>, but only as rituals (10 minutes longer, no cost). They're in your Spells section.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Extra Attack</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 5</p><p>When you take the <b>Attack</b> action, you attack <b>twice</b> instead of once. Roll each attack separately; you can pick different targets.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Fast Movement</span><span class="pill type">Already applied</span></span></summary><div class="sbody"><p class="muted small">Barbarian, level 5</p><p>+10 feet of speed when you aren't wearing heavy armor. Already in your 40 ft (walking and flying).</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Sentinel</span><span class="pill type">Reaction</span></span></summary><div class="sbody"><p class="muted small">Feat, level 4 · Uses your Reaction (one per round)</p><p>+1 Strength (already applied), and:</p><ul><li><b>Guardian:</b> right after a creature within 5 feet of you <b>hits someone other than you</b>, or takes the Disengage action, you can make an <b>Opportunity Attack</b> against it: one greataxe attack, using your Reaction.</li><li><b>Halt:</b> when you hit a creature with an Opportunity Attack, its <b>speed becomes 0</b> for the rest of that turn.</li></ul></div></details><details class="feat"><summary><span class="sh"><span class="sname">Tough</span><span class="pill type">Already applied</span></span></summary><div class="sbody"><p class="muted small">Farmer background feat</p><p>+2 maximum Hit Points per level (+10 at level 5). Already in your 65.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Fairy: Flight</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Species</p><p>You have wings. You can <b>fly 40 feet</b> on your turn, the same as your walking speed. You can't fly while wearing medium or heavy armor.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Fairy: Fey</span><span class="pill type">Always on</span></span></summary><div class="sbody"><p class="muted small">Species</p><p>Your creature type is <b>Fey</b>, not Humanoid. Spells that only affect Humanoids, like <b>Hold Person</b>, don't work on you.</p></div></details><details class="feat"><summary><span class="sh"><span class="sname">Fairy: Fairy Magic</span><span class="pill type">Magic</span></span></summary><div class="sbody"><p class="muted small">Species · Faerie Fire and Enlarge/Reduce: each once per Long Rest, free</p><p>You know the <b>Druidcraft</b> cantrip, and you can cast <b>Faerie Fire</b> and <b>Enlarge/Reduce</b> once each per Long Rest without a spell slot. These use <b>Wisdom</b> (save DC 12). They're in your Spells section. You can't cast them while raging.</p></div></details>
+</section>
+
+
+
+<section id="scores">
+  <h2>Ability scores and saving throws</h2>
+  <p class="muted">The <b>modifier</b> is what you add to rolls. A <b>saving throw</b> is a roll to resist something bad, like dodging a fireball (Dexterity) or shrugging off poison (Constitution). The DM will say which. Roll d20 + the save number. ● means you're trained in that save.</p>
+  <div class="card scroll"><table><thead><tr><th>Ability</th><th>Score</th><th>Mod</th><th>Save</th></tr></thead><tbody><tr><td><b>Strength</b><div class="use">Lifting, pushing, climbing, jumping, hitting hard with non-finesse weapons.</div></td><td class="num">17</td><td class="num">+3</td><td class="num hi">+6<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Dexterity</b><div class="use">Agility, balance, reflexes, sneaking, aiming bows. Your armor and initiative use it.</div></td><td class="num">13</td><td class="num">+1</td><td class="num ">+1</td></tr><tr><td><b>Constitution</b><div class="use">Toughness and stamina. Adds to your Hit Points and helps you keep concentrating on spells.</div></td><td class="num">16</td><td class="num">+3</td><td class="num hi">+6<span class="dot" title="proficient">●</span></td></tr><tr><td><b>Intelligence</b><div class="use">Memory, reasoning and book learning.</div></td><td class="num">8</td><td class="num">−1</td><td class="num ">−1</td></tr><tr><td><b>Wisdom</b><div class="use">Awareness, intuition and willpower. Noticing things.</div></td><td class="num">12</td><td class="num">+1</td><td class="num ">+1</td></tr><tr><td><b>Charisma</b><div class="use">Force of personality: persuading, lying, performing, intimidating.</div></td><td class="num">10</td><td class="num">+0</td><td class="num ">+0</td></tr></tbody></table>
+  <p class="muted small" style="margin-top:8px">How these were built: Base 15 Str, 14 Con, 13 Dex, 12 Wis, 10 Cha, 8 Int. Farmer +2 Con +1 Str. Level 4: Sentinel feat (+1 Str).</p></div>
+  <h2 style="margin-top:24px">Skills</h2>
+  <p class="muted">When the DM says "make a Perception check", roll d20 + the number here. Skills marked Trained or Expert get your proficiency bonus.</p>
+  <div class="card scroll"><table><thead><tr><th>Skill</th><th class="numh">Roll</th></tr></thead><tbody><tr class=""><td><b>Acrobatics</b> <span class="muted">(Dex)</span><div class="use">Keeping your balance, tumbling, wriggling free, landing on your feet.</div></td><td class="num">+1</td></tr><tr class="prof"><td><b>Animal Handling</b> <span class="muted">(Wis)</span> <span class="chip">Trained</span><div class="use">Calming or controlling an animal, or guessing what it wants.</div></td><td class="num">+4</td></tr><tr class=""><td><b>Arcana</b> <span class="muted">(Int)</span><div class="use">Knowing about magic, spells, magic items and magical creatures.</div></td><td class="num">−1</td></tr><tr class="prof"><td><b>Athletics</b> <span class="muted">(Str)</span> <span class="chip">Trained</span><div class="use">Climbing, swimming, jumping, shoving, grappling.</div></td><td class="num">+6</td></tr><tr class=""><td><b>Deception</b> <span class="muted">(Cha)</span><div class="use">Lying convincingly, bluffing, disguising your intentions.</div></td><td class="num">+0</td></tr><tr class=""><td><b>History</b> <span class="muted">(Int)</span><div class="use">Remembering past events, kingdoms, wars and legends.</div></td><td class="num">−1</td></tr><tr class=""><td><b>Insight</b> <span class="muted">(Wis)</span><div class="use">Telling if someone is lying or what they really feel.</div></td><td class="num">+1</td></tr><tr class="prof"><td><b>Intimidation</b> <span class="muted">(Cha)</span> <span class="chip">Trained</span><div class="use">Scaring or pressuring someone into doing what you want.</div></td><td class="num">+3</td></tr><tr class=""><td><b>Investigation</b> <span class="muted">(Int)</span><div class="use">Searching for clues, working out how something works, spotting traps by reasoning.</div></td><td class="num">−1</td></tr><tr class=""><td><b>Medicine</b> <span class="muted">(Wis)</span><div class="use">Stabilizing a dying friend (DC 10, no kit needed), or working out what made someone sick or killed them.</div></td><td class="num">+1</td></tr><tr class="prof"><td><b>Nature</b> <span class="muted">(Int)</span> <span class="chip">Trained</span><div class="use">Knowing about plants, animals, terrain and weather.</div></td><td class="num">+2</td></tr><tr class="prof"><td><b>Perception</b> <span class="muted">(Wis)</span> <span class="chip">Trained</span><div class="use">Spotting, hearing or noticing things. The most-rolled skill in the game.</div></td><td class="num">+4</td></tr><tr class=""><td><b>Performance</b> <span class="muted">(Cha)</span><div class="use">Music, dance, acting, storytelling for a crowd.</div></td><td class="num">+0</td></tr><tr class=""><td><b>Persuasion</b> <span class="muted">(Cha)</span><div class="use">Convincing someone politely and honestly.</div></td><td class="num">+0</td></tr><tr class=""><td><b>Religion</b> <span class="muted">(Int)</span><div class="use">Knowing about gods, rites, holy symbols and the undead.</div></td><td class="num">−1</td></tr><tr class=""><td><b>Sleight of Hand</b> <span class="muted">(Dex)</span><div class="use">Pickpocketing, palming an object, quick hand tricks.</div></td><td class="num">+1</td></tr><tr class=""><td><b>Stealth</b> <span class="muted">(Dex)</span><div class="use">Sneaking and hiding.</div></td><td class="num">+1</td></tr><tr class=""><td><b>Survival</b> <span class="muted">(Wis)</span><div class="use">Tracking, hunting, finding your way, predicting weather.</div></td><td class="num">+1</td></tr></tbody></table></div>
+</section>
+
+<section id="gear">
+  <h2>Gear</h2>
+  <div class="card"><ul><li>Greataxe</li><li>4 Handaxes</li><li>Explorer's Pack: backpack, bedroll, 2 flasks of oil, 10 days of rations, 50 ft of rope, tinderbox, 10 torches, waterskin</li><li>Sickle</li><li>Carpenter's Tools</li><li>Healer's Kit</li><li>Iron pot</li><li>Shovel</li><li>Traveler's clothes</li><li>45 gold pieces</li></ul>
+  <p><b>Tools you can use:</b> Carpenter's Tools. Add your proficiency (+3) to checks with them.</p>
+  <p><b>Languages:</b> Common, Elvish, Dwarvish.</p></div>
+</section>
+
+<section id="you">
+  <h2>Who you are</h2>
+  <div class="card"><p><b>Personality:</b> Attentive, energetic, mischievous.</p><p><b>Why she's here:</b> "Because D&amp;D is fun, and I want to share it with friends."</p></div>
+</section>
+
+<section id="rules">
+  <h2>Rules help</h2>
+  <details><summary><span class="sname">Rolling: checks, saves, attacks</span></summary><div class="sbody">
+    <p>Almost everything is a <b>d20 roll + a number</b>, trying to reach a target the DM knows:</p>
+    <ul><li><b>Ability check</b> (a skill): d20 + the skill number. Target is a DC (Difficulty Class): 10 easy, 15 medium, 20 hard.</li>
+    <li><b>Saving throw</b>: d20 + the save number, to resist something.</li>
+    <li><b>Attack roll</b>: d20 + to-hit number, against the target's Armor Class.</li></ul>
+    <p><b>Advantage:</b> roll two d20s and use the <b>higher</b>. <b>Disadvantage:</b> roll two and use the <b>lower</b>. If you have both, they cancel out: roll one.</p>
+    <p><b>Natural 20</b> on an attack always hits and is a critical hit. <b>Natural 1</b> on an attack always misses.</p>
+  </div></details>
+  <details><summary><span class="sname">Your turn: what you can do</span></summary><div class="sbody">
+    <p>On your turn: <b>move</b> (up to your speed, and you can split it up before and after your action), take <b>one Action</b>, and take a <b>Bonus Action</b> only if a spell or feature says it uses one. Talking a little is free.</p>
+    <p><b>Actions anyone can take:</b></p>
+    <ul><li><b>Attack</b>: swing or shoot a weapon.</li><li><b>Magic</b>: cast a spell or use a magic feature.</li><li><b>Dash</b>: move your speed again.</li><li><b>Disengage</b>: move away without enemies getting free hits.</li><li><b>Dodge</b>: attacks against you have disadvantage until your next turn, and you have advantage on Dexterity saves.</li><li><b>Help</b>: give a friend advantage on their next check or attack.</li><li><b>Hide</b>: Dexterity (Stealth) check to become hidden.</li><li><b>Search</b> / <b>Study</b>: look for something (Wisdom) or figure something out (Intelligence).</li><li><b>Influence</b>: persuade, deceive or intimidate someone.</li><li><b>Ready</b>: pick a trigger ("when the door opens, I cast Fire Bolt") and react when it happens.</li><li><b>Utilize</b>: use an object (drink a potion, pull a lever, use a Healer's Kit).</li></ul>
+    <p><b>Reaction</b> (one per round, even on others' turns): spells like Shield, or an <b>Opportunity Attack</b>, which means one free melee attack when an enemy next to you moves away.</p>
+  </div></details>
+  <details><summary><span class="sname">Hit Points, dropping to 0, and death saves</span></summary><div class="sbody">
+    <p>Damage lowers your HP. <b>Temporary HP</b> absorbs damage first and doesn't stack. At <b>0 HP</b> you fall unconscious.</p>
+    <p>At the start of each of your turns at 0 HP, roll a <b>death saving throw</b>: a plain d20, nothing added. <b>10 or higher</b> = a success, <b>9 or lower</b> = a failure. <b>3 successes</b>: you're stable. <b>3 failures</b>: you die. A <b>natural 20</b>: you wake up with 1 HP. A <b>natural 1</b>: two failures. Taking damage while at 0 = one failure (a critical hit = two).</p>
+    <p><b>Any healing at all wakes you up.</b> A friend can also stabilize you with a DC 10 Wisdom (Medicine) check.</p>
+  </div></details>
+  <details><summary><span class="sname">Resting</span></summary><div class="sbody">
+    <p><b>Short Rest</b> (1 hour of downtime): spend Hit Dice to heal. Roll a d12, add your Constitution modifier (+3), and heal that much, as many times as you have Hit Dice left. Some features come back too (it says so on each one).</p>
+    <p><b>Long Rest</b> (8 hours, a night's sleep): get back <b>all</b> your HP, all spent Hit Dice, all spell slots and all once-per-day features. Only one Long Rest per day.</p>
+  </div></details>
+  <details><summary><span class="sname">Conditions (what they mean)</span></summary><div class="sbody">
+    <ul><li><b>Blinded:</b> you can't see; your attacks have disadvantage, attacks against you have advantage.</li>
+    <li><b>Charmed:</b> you can't attack the charmer, and it has advantage when it talks to you.</li>
+    <li><b>Frightened:</b> disadvantage on checks and attacks while you can see the source; you can't move closer to it.</li>
+    <li><b>Grappled:</b> speed 0; you can try to escape with an Athletics or Acrobatics check as your action.</li>
+    <li><b>Incapacitated:</b> you can't take actions, bonus actions or reactions; concentration breaks.</li>
+    <li><b>Invisible:</b> attacks against you have disadvantage, yours have advantage.</li>
+    <li><b>Paralyzed:</b> Incapacitated, can't move or speak; hits from within 5 feet are critical hits.</li>
+    <li><b>Poisoned:</b> disadvantage on attack rolls and ability checks.</li>
+    <li><b>Prone:</b> lying down. Standing up costs half your speed. Your attacks have disadvantage; melee attacks against you have advantage, ranged ones disadvantage.</li>
+    <li><b>Restrained:</b> speed 0; your attacks and Dexterity saves have disadvantage; attacks against you have advantage.</li>
+    <li><b>Unconscious:</b> Incapacitated, Prone, drop what you're holding; hits from within 5 feet are critical hits.</li></ul>
+  </div></details>
+  <details><summary><span class="sname">Cover, range, light</span></summary><div class="sbody">
+    <p><b>Half cover</b> (behind a low wall or another creature): +2 AC and Dex saves. <b>Three-quarters cover</b> (arrow slit, thick tree): +5. <b>Total cover</b>: can't be targeted.</p>
+    <p>Ranged attacks at <b>long range</b> (the second number, like 80/320) have disadvantage. So do ranged attacks while an enemy is right next to you.</p>
+    <p><b>Dim light</b>: disadvantage on Perception checks that rely on sight. <b>Darkness</b>: effectively blind, unless you have Darkvision, which treats darkness as dim light.</p>
+  </div></details>
+</section>
+
+<footer>Built for the Lantern Fair. No rolling here: grab your real dice. Questions? Ask your DM.</footer>
+</div>
+<script>
+(function(){
+  function get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function set(k,v){ try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k,v); } catch(e){} }
+  var boxes = document.querySelectorAll('input[type=checkbox][data-k]');
+  boxes.forEach(function(b){ b.checked = get(b.dataset.k) === '1'; b.addEventListener('change', function(){ set(b.dataset.k, b.checked ? '1' : null); }); });
+  var nums = document.querySelectorAll('input[type=number][data-k]');
+  nums.forEach(function(n){ var v = get(n.dataset.k); if (v !== null) n.value = v; n.addEventListener('input', function(){ set(n.dataset.k, n.value); }); });
+  var slug = "gwen2";
+  var ORD = ['', '1st', '2nd', '3rd'];
+  function take(key){
+    var list = document.querySelectorAll('input[data-k^="' + slug + ':' + key + ':"]');
+    for (var i = 0; i < list.length; i++) if (!list[i].checked) { list[i].checked = true; set(list[i].dataset.k, '1'); return true; }
+    return false;
+  }
+  document.querySelectorAll('button.cast').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.spell'), msg = card.querySelector('.castmsg');
+      var lvl = +btn.dataset.level, text = '';
+      if (btn.dataset.free && take(btn.dataset.free)) text = 'Used a free cast.';
+      else if (btn.dataset.freeonly) text = 'No free casts left for this one.';
+      else {
+        var used = 0;
+        for (var L = lvl; L <= 3 && !used; L++) if (take('slot' + L)) used = L;
+        if (!used) text = 'No ' + ORD[lvl] + '-level or higher slots left.';
+        else if (used === lvl) text = 'Used a ' + ORD[used] + '-level slot.';
+        else text = 'No ' + ORD[lvl] + '-level slots left, so this used a ' + ORD[used] + '-level slot.';
+      }
+      msg.textContent = text;
+      clearTimeout(msg._t); msg._t = setTimeout(function(){ msg.textContent = ''; }, 5000);
+    });
+  });
+  var MAX = 65, hpK = slug + ':hp', tK = slug + ':thp';
+  function num(v, d){ var n = parseInt(v, 10); return isNaN(n) ? d : n; }
+  var hp = Math.max(0, Math.min(MAX, num(get(hpK), MAX))), thp = Math.max(0, num(get(tK), 0)), last = null;
+  var stEl = document.getElementById('hpstate');
+  function drawHP(note){
+    document.getElementById('hpcur').textContent = hp;
+    document.getElementById('hptempn').textContent = thp;
+    document.getElementById('hptemp').hidden = thp <= 0;
+    document.getElementById('hpfill').style.width = (hp / MAX * 100) + '%';
+    var down = hp === 0;
+    stEl.className = 'hpstate' + (down ? ' down' : '');
+    stEl.textContent = down ? 'You are at 0 HP and unconscious. At the start of each of your turns, roll a death save (see the Tracker). Any healing wakes you up.' : (note || '');
+    document.getElementById('hpundo').disabled = !last;
+    set(hpK, String(hp)); set(tK, String(thp));
+  }
+  function clearDeathSaves(){ document.querySelectorAll('input[data-k^="' + slug + ':ds:"], input[data-k^="' + slug + ':df:"]').forEach(function(b){ b.checked = false; set(b.dataset.k, null); }); }
+  document.querySelectorAll('.hpbtn[data-act]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var inp = document.getElementById('hpamt'), amt = num(inp.value, 0);
+      if (amt <= 0) { stEl.className = 'hpstate'; stEl.textContent = 'Type a number first.'; inp.focus(); return; }
+      last = { hp: hp, thp: thp }; var note;
+      if (btn.dataset.act === 'dmg') {
+        var fromT = Math.min(thp, amt); thp -= fromT; hp = Math.max(0, hp - (amt - fromT));
+        note = 'Took ' + amt + ' damage' + (fromT ? ' (' + fromT + ' from temporary HP)' : '') + '.';
+      } else if (btn.dataset.act === 'heal') {
+        var was = hp; hp = Math.min(MAX, hp + amt); if (was === 0 && hp > 0) clearDeathSaves();
+        note = 'Healed ' + (hp - was) + '.' + (hp === MAX ? ' You are at full HP.' : '');
+      } else {
+        var old = thp; thp = Math.max(thp, amt);
+        note = thp === old ? 'You already have ' + old + ' temporary HP, which is more, so you keep that.' : 'You now have ' + thp + ' temporary HP.';
+      }
+      inp.value = ''; drawHP(note);
+    });
+  });
+  document.getElementById('hpundo').addEventListener('click', function(){ if (!last) return; hp = last.hp; thp = last.thp; last = null; drawHP('Undid the last change.'); });
+  drawHP('');
+  document.getElementById('reset').addEventListener('click', function(){
+    if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
+    boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });
+    nums.forEach(function(n){ n.value = n.defaultValue; set(n.dataset.k, null); });
+    hp = MAX; thp = 0; last = null; drawHP('Long Rest: back to full HP.');
+  });
+})();
+</script>
+</body>
+</html>
