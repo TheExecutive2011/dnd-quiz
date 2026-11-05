@@ -10,7 +10,7 @@ ${n ? `<p>${n}</p>` : ''}` });
 
 const DRUID_COMMON = (ws) => [
   { name: 'Spellcasting', src: 'Druid, level 1', type: 'Rule',
-    text: `<p>Your magic comes from <b>Wisdom</b>. You can cast the spells on your <b>prepared</b> list using spell slots. Cantrips are free and unlimited. After every Long Rest you may swap any prepared spells for other druid spells if you want to. Your staff is your <b>druidic focus</b>: hold it to cast spells that need a material.</p>` },
+    text: `<p>Your magic comes from <b>Wisdom</b>. You can cast the spells on your <b>prepared</b> list using spell slots. Cantrips are free and unlimited. Your staff is your <b>druidic focus</b>: hold it to cast spells that need a material.</p>` },
   { name: 'Druidic', src: 'Druid, level 1', type: 'Always on',
     text: `<p>You know Druidic, the secret language of druids, and can leave hidden messages in it that only other druids notice. You also always have <b>Speak with Animals</b> prepared (it doesn't count against your 9).</p>` },
   { name: 'Primal Order: Magician', src: 'Druid, level 1', type: 'Always on',
@@ -24,15 +24,11 @@ const DRUID_COMMON = (ws) => [
 
 const WIZ_COMMON = [
   { name: 'Spellcasting and your spellbook', src: 'Wizard, level 1', type: 'Rule',
-    text: `<p>Your magic comes from <b>Intelligence</b>. Every spell you know is written in your <b>spellbook</b> (all 17 are listed below). Each day you have <b>9 prepared</b> spells: those are the ones you can cast with slots. After a Long Rest you can choose a different 9 from your book. Cantrips are free and unlimited. Your quarterstaff is your <b>arcane focus</b>: hold it to cast spells that need a material.</p>` },
-  { name: 'Ritual Adept', src: 'Wizard, level 1', type: 'Rule',
-    text: `<p>Any spell in your book marked <b>ritual</b> can be cast without preparing it and without a spell slot. It just takes 10 minutes longer.</p>` },
+    text: `<p>Your magic comes from <b>Intelligence</b>. Your spells are written in your <b>spellbook</b>. Your 9 spells below use spell slots. Cantrips are free and unlimited. Your quarterstaff is your <b>arcane focus</b>: hold it to cast spells that need a material.</p>` },
   { name: 'Arcane Recovery', src: 'Wizard, level 1', type: 'After a Short Rest', uses: 'Once per day', track: { key: 'ar', count: 1, label: 'Arcane Recovery' },
     text: `<p>When you finish a Short Rest, you can get back used spell slots whose levels add up to <b>3 or less</b>. For example, one 3rd-level slot, or a 2nd plus a 1st, or three 1sts. Once per day.</p>` },
   { name: 'Scholar', src: 'Wizard, level 2', type: 'Always on',
     text: `<p>You are an expert in <b>Arcana</b>, so you add double your proficiency bonus to it. That's already in your skill list.</p>` },
-  { name: 'Memorize Spell', src: 'Wizard, level 5', type: 'After a Short Rest',
-    text: `<p>Whenever you finish a Short Rest, you can swap one prepared spell for another spell in your spellbook.</p>` },
 ];
 
 module.exports = [
@@ -62,7 +58,7 @@ module.exports = [
   features: [
     ...DRUID_COMMON('Kender are Small, but that doesn\'t limit your animal forms.'),
     { name: 'Circle of the Land: circle spells', src: 'Druid subclass, level 3', type: 'Always on',
-      text: `<p>Your circle draws power from a type of land. You picked <b>Arid</b> (deserts and badlands), which always gives you <b>Fire Bolt, Blur, Burning Hands and Fireball</b> prepared for free. After each Long Rest you may switch to a different land if the adventure calls for it.</p><ul><li><b>Polar:</b> Fog Cloud, Hold Person, Ray of Frost; Sleet Storm.</li><li><b>Temperate:</b> Misty Step, Shocking Grasp, Sleep; Lightning Bolt.</li><li><b>Tropical:</b> Acid Splash, Ray of Sickness, Web; Stinking Cloud.</li></ul>` },
+      text: `<p>Your circle draws power from a type of land. You picked <b>Arid</b> (deserts and badlands), which always gives you <b>Fire Bolt, Blur, Burning Hands and Fireball</b> prepared for free.</p>` },
     { name: "Land's Aid", src: 'Druid subclass, level 3', type: 'Magic action', uses: 'Spends 1 Wild Shape use',
       text: `<p>Spend a Wild Shape use and pick a point within 60 feet. Thorny flowers burst in a <b>10-foot radius</b> around it. Every enemy you choose in that area makes a <b>Constitution save against DC 15</b>: it takes <b>2d6 Necrotic damage</b> on a fail, half on a success. At the same time, <b>one friend</b> in the area heals <b>2d6 Hit Points</b>.</p>` },
     { name: 'Ability Score Improvement', src: 'Druid, level 4', type: 'Already applied', text: `<p>+1 Wisdom and +1 Constitution. Already in your numbers.</p>` },
@@ -100,12 +96,9 @@ module.exports = [
   cantripSrc: { 'Light': 'Magic Initiate feat', 'Prestidigitation': 'Magic Initiate feat', 'Druidcraft': 'Lotusden Halfling (uses Wisdom)' },
   always: { 'Shield': 'Magic Initiate feat: cast once free per Long Rest', 'Entangle': { src: 'Lotusden Halfling: once free per Long Rest. Uses Wisdom, so the DC is 12', dc: 12 }, 'Spike Growth': { src: 'Lotusden Halfling: once free per Long Rest (uses Wisdom)', dc: 12 } },
   prepared: ['Mage Armor', 'Magic Missile', 'Sleep', 'Thunderwave', 'Misty Step', 'Web', 'Scorching Ray', 'Fireball', 'Counterspell'],
-  spellbookOnly: ['Detect Magic', 'Find Familiar', 'Comprehend Languages', 'Feather Fall', 'Burning Hands', 'Invisibility', 'Shatter', 'Fly'],
   free: [{ key: 'mi', label: 'Shield (free cast)', count: 1 }, { key: 'ent', label: 'Entangle (halfling)', count: 1 }, { key: 'spk', label: 'Spike Growth (halfling)', count: 1 }],
   features: [
     ...WIZ_COMMON,
-    { name: 'Evoker: Evocation Savant', src: 'Wizard subclass, level 3', type: 'Already applied',
-      text: `<p>You got extra Evocation spells added to your spellbook for free: Magic Missile, Scorching Ray and Fireball are among them.</p>` },
     { name: 'Evoker: Potent Cantrip', src: 'Wizard subclass, level 3', type: 'Always on',
       text: `<p>When you cast a <b>damage cantrip</b> (Fire Bolt, Ray of Frost, Shocking Grasp) and <b>miss</b>, the target still takes <b>half the damage</b> (but none of the extra effect, like Ray of Frost's slow). Roll the damage anyway on a miss and halve it, rounding down.</p>` },
     { name: 'Ability Score Improvement', src: 'Wizard, level 4', type: 'Already applied', text: `<p>+1 Intelligence and +1 Constitution. Already in your numbers.</p>` },
@@ -195,7 +188,7 @@ module.exports = [
   free: [{ key: 'hm', label: "Hunter's Mark (free)", count: 3 }, { key: 'insp', label: 'Heroic Inspiration', count: 1 }],
   features: [
     { name: 'Spellcasting', src: 'Ranger, level 1', type: 'Rule',
-      text: `<p>Your magic comes from <b>Wisdom</b>. You have <b>6 prepared spells</b> (plus Hunter's Mark for free). After a Long Rest you can swap them for other ranger spells. Your sprig of mistletoe is your focus. You have no cantrips. Your arrows do the work.</p>` },
+      text: `<p>Your magic comes from <b>Wisdom</b>. You have <b>6 prepared spells</b> (plus Hunter's Mark for free). Your sprig of mistletoe is your focus. You have no cantrips. Your arrows do the work.</p>` },
     { name: 'Favored Enemy', src: 'Ranger, level 1', type: 'Magic', uses: "Hunter's Mark: 3 free casts per Long Rest",
       text: `<p>You always have <b>Hunter's Mark</b> prepared and can cast it <b>3 times per Long Rest without a spell slot</b>.</p>` },
     { name: 'Weapon Mastery', src: 'Ranger, level 1', type: 'Always on',
@@ -207,7 +200,7 @@ module.exports = [
     { name: "Hunter: Hunter's Lore", src: 'Ranger subclass, level 3', type: 'Always on',
       text: `<p>While a creature has your Hunter's Mark on it, you know whether it has any <b>immunities, resistances or vulnerabilities</b> (what damage hurts it more or less). The DM tells you.</p>` },
     { name: "Hunter: Hunter's Prey", src: 'Ranger subclass, level 3', type: 'Always on',
-      text: `<p>You have <b>Colossus Slayer</b>: once per turn, when you hit a creature that is <b>missing any Hit Points</b>, it takes an <b>extra 1d8</b> damage. The DM tells you whether it is.</p><p>Whenever you finish a Short or Long Rest you can switch to <b>Horde Breaker</b> instead: once per turn, when you make a weapon attack, you can make one more attack with the same weapon against a <i>different</i> creature within 5 feet of the first one (and within range).</p>` },
+      text: `<p>You have <b>Colossus Slayer</b>: once per turn, when you hit a creature that is <b>missing any Hit Points</b>, it takes an <b>extra 1d8</b> damage. The DM tells you whether it is.</p>` },
     { name: 'Sharpshooter', src: 'Feat, level 4', type: 'Always on',
       text: `<p>+1 Dexterity (already applied), and three bow tricks:</p><ul><li><b>Ignore cover:</b> enemies hiding behind half or three-quarters cover get no AC bonus against your arrows.</li><li><b>Shoot in close quarters:</b> no disadvantage for shooting when an enemy is right next to you.</li><li><b>Long shots:</b> no disadvantage for shooting at long range (out to 600 feet with the longbow).</li></ul>` },
     { name: 'Extra Attack', src: 'Ranger, level 5', type: 'Always on',
@@ -284,15 +277,12 @@ module.exports = [
     ['Dagger', '+6', '1d4 + 3 Piercing', 'Melee, or thrown 20/60 ft', 'You have two.'],
   ],
   cantrips: ['Fire Bolt', 'Mind Sliver', 'Mage Hand', 'Minor Illusion', 'Prestidigitation'],
-  cantripSrc: { 'Prestidigitation': 'High Elf (you can swap it for another wizard cantrip after a Long Rest)' },
+  cantripSrc: { 'Prestidigitation': 'High Elf' },
   always: { 'Detect Magic': 'High Elf: once free per Long Rest', 'Misty Step': 'High Elf: once free per Long Rest' },
   prepared: ['Mage Armor', 'Shield', 'Magic Missile', "Tasha's Hideous Laughter", 'Hold Person', 'Mirror Image', 'Invisibility', 'Hypnotic Pattern', 'Haste'],
-  spellbookOnly: ['Identify', 'Find Familiar', 'Comprehend Languages', 'See Invisibility', 'Detect Thoughts', 'Clairvoyance', 'Fly'],
   free: [{ key: 'por', label: 'Portent dice', count: 2 }, { key: 'dm', label: 'Detect Magic (elf)', count: 1 }, { key: 'ms', label: 'Misty Step (elf)', count: 1 }],
   features: [
     ...WIZ_COMMON,
-    { name: 'Diviner: Divination Savant', src: 'Wizard subclass, level 3', type: 'Already applied',
-      text: `<p>Extra Divination spells were added to your spellbook for free (Detect Magic, Identify, See Invisibility, Clairvoyance among them).</p>` },
     { name: 'Diviner: Portent', src: 'Wizard subclass, level 3', type: 'No action', uses: '2 dice, rerolled every Long Rest',
       text: `<p><b>When you finish a Long Rest, roll two d20s and write the numbers down.</b> Those are your "foretold" rolls.</p><p>Any time you or a creature you can see is about to make a <b>d20 roll</b> (attack, saving throw or ability check), you can say "Portent!" <b>before it's rolled</b> and replace it with one of your numbers. Each number is used once, and you can only use one per turn.</p><p>Unused numbers are lost when you roll new ones after your next Long Rest.</p>` },
     { name: 'Ability Score Improvement', src: 'Wizard, level 4', type: 'Already applied', text: `<p>+1 Intelligence and +1 Dexterity. Already in your numbers.</p>` },
@@ -301,7 +291,7 @@ module.exports = [
     { name: 'Elf: Keen Senses', src: 'Species', type: 'Always on', text: `<p>You're proficient in <b>Perception</b>. Already in your skills.</p>` },
     { name: 'Elf: Trance', src: 'Species', type: 'Always on', text: `<p>You don't need to sleep, and magic can't put you to sleep (Brixa's Sleep spell won't affect you). You finish a Long Rest in just 4 hours of meditation, staying aware of your surroundings.</p>` },
     { name: 'High Elf lineage', src: 'Species', type: 'Magic', uses: 'Detect Magic and Misty Step: each once per Long Rest, free',
-      text: `<p>You know <b>Prestidigitation</b> (swap it for another wizard cantrip after any Long Rest if you like). You can cast <b>Detect Magic</b> and <b>Misty Step</b> once each per Long Rest without a spell slot.</p>` },
+      text: `<p>You know <b>Prestidigitation</b>. You can cast <b>Detect Magic</b> and <b>Misty Step</b> once each per Long Rest without a spell slot.</p>` },
     { name: 'Musician', src: 'Entertainer background feat', type: 'After a rest', uses: 'Every Short or Long Rest',
       text: `<p>When you finish a Short or Long Rest, play a song on your lute and give <b>Heroic Inspiration</b> to up to <b>3</b> friends who hear it. Each can spend it to <b>reroll any one die</b> right after rolling it. You also know how to play three instruments.</p>` },
   ],
