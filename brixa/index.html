@@ -9,9 +9,9 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,50&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:#b8432f; --soft:#e3e7ef; --conc:#8a5a00; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --accent:#f07b66; --conc:#f0b44a; color-scheme: dark; } }
-:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --soft:#262b3c; --accent:#f07b66; --conc:#f0b44a; color-scheme: dark; }
+:root { --bg:#eef0f4; --panel:#fff; --fg:#1d2230; --muted:#5a6275; --line:#d4d9e3; --accent:#b8432f; --soft:#e3e7ef; --conc:#8a5a00; --down:#b3261e; --good:#2e7d4a; --display:"Fraunces",Georgia,serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --down:#ff8a7a; --good:#7cc98f; --soft:#262b3c; --accent:#f07b66; --conc:#f0b44a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#161a26; --panel:#1f2434; --fg:#e9ebf2; --muted:#a2a9bb; --line:#343b4f; --down:#ff8a7a; --good:#7cc98f; --soft:#262b3c; --accent:#f07b66; --conc:#f0b44a; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); font-size:16px; line-height:1.5; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 80px; }
 body::before { content:""; position:fixed; inset:0 0 auto; height: env(safe-area-inset-top, 0px); z-index:10; background: var(--bg); }
@@ -112,8 +112,25 @@ h4.lvl { margin-top: 18px; font-family: var(--display); font-size: 1.15rem; }
 .box input:checked + span { background: var(--accent); }
 .box input:focus-visible + span { outline: 3px solid var(--fg); outline-offset: 2px; }
 button.reset { font: inherit; font-weight:700; padding:10px 14px; border-radius:10px; border:1px solid var(--accent); background:var(--panel); color:var(--fg); cursor:pointer; margin-top:10px; }
-.hpbox { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
-.hpbox input { font: inherit; font-size:1.4rem; font-weight:700; width: 90px; padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color: var(--fg); }
+.hpcard { display:grid; gap:10px; }
+.hpnow { display:flex; align-items:baseline; gap: 8px 14px; flex-wrap: wrap; }
+.hpbig { font-family: var(--display); font-size: 3rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.hpmax { font-size: 1.4rem; color: var(--muted); }
+.hptemp { font-weight:700; padding: 2px 10px; border-radius: 999px; background: var(--soft); }
+.hpbar { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.hpbar span { display:block; height:100%; width:100%; background: var(--accent); border-radius: 999px; transition: width .25s; }
+.hpstate { margin:0; font-weight:700; }
+.hpstate:empty { display:none; }
+.hpstate.down { color: var(--down); }
+.hpctl { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; align-items:end; }
+.hpctl .fl { grid-column: 1 / -1; }
+.hpctl input { grid-column: 1 / -1; font: inherit; font-size:1.5rem; font-weight:700; padding:8px 12px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color: var(--fg); min-width:0; }
+@media (min-width: 640px) { .hpctl { grid-template-columns: 8rem repeat(4, auto); justify-content: start; } .hpctl .fl { grid-column: 1 / -1; } .hpctl input { grid-column: auto; } }
+.hpbtn { font: inherit; font-weight:700; padding: 10px 14px; border-radius:10px; min-height: 44px; cursor:pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
+.hpbtn.dmg { background: var(--down); border-color: var(--down); color: var(--bg); }
+.hpbtn.heal { background: var(--good); border-color: var(--good); color: var(--bg); }
+.hpbtn:disabled { opacity: .45; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .hpbar span { transition: none; } }
 footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 @media print { nav, button.reset { display:none; } details { break-inside: avoid; } details:not([open]) .sbody { display:block; } body { background:#fff; } }
 </style>
@@ -135,7 +152,25 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
     <div class="stat"><div class="k">Spell Attack</div><div class="v">+7</div><div class="n">Add to d20 for spell attacks</div></div>
   </div>
 </header>
-<nav aria-label="Jump to"><a href="#track">Tracker</a><a href="#attacks">Attacks</a><a href="#spells">Spells</a><a href="#features">Abilities</a><a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+<nav aria-label="Jump to"><a href="#hp">Hit Points</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a><a href="#spells">Spells</a><a href="#features">Abilities</a><a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+
+<section id="hp">
+  <h2>Hit Points</h2>
+  <div class="card hpcard">
+    <div class="hpnow"><span class="hpbig"><span id="hpcur">37</span><span class="hpmax"> / 37</span></span><span class="hptemp" id="hptemp" hidden>+<span id="hptempn">0</span> temporary</span></div>
+    <div class="hpbar" aria-hidden="true"><span id="hpfill"></span></div>
+    <p class="hpstate" id="hpstate" role="status" aria-live="polite"></p>
+    <div class="hpctl">
+      <label for="hpamt" class="fl">Amount</label>
+      <input id="hpamt" type="number" inputmode="numeric" min="0" placeholder="0">
+      <button type="button" class="hpbtn dmg" data-act="dmg">Damage</button>
+      <button type="button" class="hpbtn heal" data-act="heal">Heal</button>
+      <button type="button" class="hpbtn tmp" data-act="tmp">Temp HP</button>
+      <button type="button" class="hpbtn undo" id="hpundo" disabled>Undo</button>
+    </div>
+    <p class="muted small">Type a number, then tap a button. Damage comes off temporary HP first. Healing can't go above 37. Temporary HP doesn't add up: you keep whichever is higher.</p>
+  </div>
+</section>
 
 <section id="how">
   <div class="callout">
@@ -148,7 +183,6 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
   <h2>Tracker</h2>
   <p class="muted">Tap a box when you use something. Spell slots are in the Spells section. Boxes stay ticked on this phone until you reset them. When you finish a <b>Long Rest</b> (a full night's sleep), tap the button to clear everything.</p>
   <div class="card">
-    <div class="hpbox"><label for="hp"><b>Current HP</b> <span class="muted">(max 37)</span></label><input id="hp" type="number" inputmode="numeric" data-k="brixa:hp" value="37"><label for="thp"><b>Temporary HP</b></label><input id="thp" type="number" inputmode="numeric" data-k="brixa:thp" value="0"></div>
     <div class="trk"><span class="tl">Arcane Recovery</span><span class="boxes"><label class="box"><input type="checkbox" data-k="brixa:ar:0"><span></span></label></span></div><div class="trk"><span class="tl">Hit Dice (d6) <span class="muted">spend on a Short Rest</span></span><span class="boxes"><label class="box"><input type="checkbox" data-k="brixa:hd:0"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:hd:1"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:hd:2"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:hd:3"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:hd:4"><span></span></label></span></div>
     <div class="trk"><span class="tl">Death saves: successes</span><span class="boxes"><label class="box"><input type="checkbox" data-k="brixa:ds:0"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:ds:1"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:ds:2"><span></span></label></span></div><div class="trk"><span class="tl">Death saves: failures</span><span class="boxes"><label class="box"><input type="checkbox" data-k="brixa:df:0"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:df:1"><span></span></label><label class="box"><input type="checkbox" data-k="brixa:df:2"><span></span></label></span></div>
     <button class="reset" type="button" id="reset">Long Rest: reset everything</button>
@@ -454,10 +488,47 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
       clearTimeout(msg._t); msg._t = setTimeout(function(){ msg.textContent = ''; }, 5000);
     });
   });
+  var MAX = 37, hpK = slug + ':hp', tK = slug + ':thp';
+  function num(v, d){ var n = parseInt(v, 10); return isNaN(n) ? d : n; }
+  var hp = Math.max(0, Math.min(MAX, num(get(hpK), MAX))), thp = Math.max(0, num(get(tK), 0)), last = null;
+  var stEl = document.getElementById('hpstate');
+  function drawHP(note){
+    document.getElementById('hpcur').textContent = hp;
+    document.getElementById('hptempn').textContent = thp;
+    document.getElementById('hptemp').hidden = thp <= 0;
+    document.getElementById('hpfill').style.width = (hp / MAX * 100) + '%';
+    var down = hp === 0;
+    stEl.className = 'hpstate' + (down ? ' down' : '');
+    stEl.textContent = down ? 'You are at 0 HP and unconscious. At the start of each of your turns, roll a death save (see the Tracker). Any healing wakes you up.' : (note || '');
+    document.getElementById('hpundo').disabled = !last;
+    set(hpK, String(hp)); set(tK, String(thp));
+  }
+  function clearDeathSaves(){ document.querySelectorAll('input[data-k^="' + slug + ':ds:"], input[data-k^="' + slug + ':df:"]').forEach(function(b){ b.checked = false; set(b.dataset.k, null); }); }
+  document.querySelectorAll('.hpbtn[data-act]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var inp = document.getElementById('hpamt'), amt = num(inp.value, 0);
+      if (amt <= 0) { stEl.className = 'hpstate'; stEl.textContent = 'Type a number first.'; inp.focus(); return; }
+      last = { hp: hp, thp: thp }; var note;
+      if (btn.dataset.act === 'dmg') {
+        var fromT = Math.min(thp, amt); thp -= fromT; hp = Math.max(0, hp - (amt - fromT));
+        note = 'Took ' + amt + ' damage' + (fromT ? ' (' + fromT + ' from temporary HP)' : '') + '.';
+      } else if (btn.dataset.act === 'heal') {
+        var was = hp; hp = Math.min(MAX, hp + amt); if (was === 0 && hp > 0) clearDeathSaves();
+        note = 'Healed ' + (hp - was) + '.' + (hp === MAX ? ' You are at full HP.' : '');
+      } else {
+        var old = thp; thp = Math.max(thp, amt);
+        note = thp === old ? 'You already have ' + old + ' temporary HP, which is more, so you keep that.' : 'You now have ' + thp + ' temporary HP.';
+      }
+      inp.value = ''; drawHP(note);
+    });
+  });
+  document.getElementById('hpundo').addEventListener('click', function(){ if (!last) return; hp = last.hp; thp = last.thp; last = null; drawHP('Undid the last change.'); });
+  drawHP('');
   document.getElementById('reset').addEventListener('click', function(){
     if (!confirm('Finished a Long Rest? This clears every box and sets HP back to full.')) return;
     boxes.forEach(function(b){ b.checked = false; set(b.dataset.k, null); });
     nums.forEach(function(n){ n.value = n.defaultValue; set(n.dataset.k, null); });
+    hp = MAX; thp = 0; last = null; drawHP('Long Rest: back to full HP.');
   });
 })();
 </script>
