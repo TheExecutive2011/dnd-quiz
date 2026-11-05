@@ -122,7 +122,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 <section id="attacks">
   <h2>Attacks</h2>
   <p class="muted">"To hit" means roll a d20 and add that number. The DM tells you if it beats the target's Armor Class. If it hits, roll the damage. <b>Rolled a natural 20</b> (the die shows 20)? That's a <b>critical hit</b>: roll all the damage dice twice and add the bonus once.</p>
-  <div class="card scroll"><table><thead><tr><th>Attack</th><th>To hit</th><th>Damage</th><th>Range</th></tr></thead><tbody><tr><td><b>Starry Form: Archer arrow</b><div class="use">Bonus Action every turn while in Starry Form (Archer).</div></td><td class="num">d20 + 7</td><td>1d8 + 4 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Guiding Bolt (spell)</b><div class="use">Next attack against target has advantage. 4 free casts per Long Rest.</div></td><td class="num">d20 + 7</td><td>4d6 Radiant</td><td class="small">120 ft</td></tr><tr><td><b>Starry Wisp (cantrip)</b><div class="use">Unlimited. Target glows and can't be invisible.</div></td><td class="num">d20 + 7</td><td>2d8 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Thorn Whip (cantrip)</b><div class="use">Pulls a Large-or-smaller target 10 ft toward you.</div></td><td class="num">d20 + 7</td><td>2d6 Piercing</td><td class="small">30 ft</td></tr><tr><td><b>Light Crossbow</b><div class="use">Two hands. Loading: one shot per turn. 20 bolts.</div></td><td class="num">d20 + 4</td><td>1d8 + 1 Piercing</td><td class="small">80 ft (up to 320 ft with disadvantage)</td></tr><tr><td><b>Spear</b><div class="use">Backup only.</div></td><td class="num">d20 + 2</td><td>1d6 − 1 Piercing (1d8 − 1 two hands)</td><td class="small">Melee, or thrown 20/60 ft</td></tr></tbody></table></div>
+  <div class="card scroll"><table><thead><tr><th>Attack</th><th>To hit</th><th>Damage</th><th>Range</th></tr></thead><tbody><tr><td><b>Starry Form: Archer arrow</b><div class="use">Bonus Action every turn while in Starry Form (Archer).</div></td><td class="num">d20 + 7</td><td>1d8 + 4 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Guiding Bolt (spell)</b><div class="use">Next attack against target has advantage. 4 free casts per Long Rest.</div></td><td class="num">d20 + 7</td><td>4d6 Radiant</td><td class="small">120 ft</td></tr><tr><td><b>Starry Wisp (cantrip)</b><div class="use">Unlimited. Target glows and can't be invisible.</div></td><td class="num">d20 + 7</td><td>2d8 Radiant</td><td class="small">60 ft</td></tr><tr><td><b>Thorn Whip (cantrip)</b><div class="use">Pulls a Large-or-smaller target 10 ft toward you.</div></td><td class="num">d20 + 7</td><td>2d6 Piercing</td><td class="small">30 ft</td></tr><tr><td><b>Light Crossbow</b><div class="use">Two hands. Loading: one shot per turn. You never run out of bolts.</div></td><td class="num">d20 + 4</td><td>1d8 + 1 Piercing</td><td class="small">80 ft (up to 320 ft with disadvantage)</td></tr><tr><td><b>Spear</b><div class="use">Backup only.</div></td><td class="num">d20 + 2</td><td>1d6 − 1 Piercing (1d8 − 1 two hands)</td><td class="small">Melee, or thrown 20/60 ft</td></tr></tbody></table></div>
 </section>
 
 <section id="spells">
@@ -131,6 +131,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
     <p><b>How your magic works.</b> <b>Cantrips</b> are free: cast them as often as you like. Every other spell uses up a <b>spell slot</b> of its level or higher. You have <b>4 1st level, 3 2nd level, 2 3rd level</b> slots, and you get them all back after a Long Rest. Casting a spell with a higher slot than needed usually makes it stronger.</p>
     <p><b>Spell attack:</b> d20 + 7. <b>Spell save DC:</b> 15. When a spell says "save", the <i>target</i> rolls and needs 15 or more to resist.</p>
     <p><span class="pill conc">Concentration</span> You can only keep <b>one</b> concentration spell going at a time. Starting a second one ends the first. If you take damage, roll a <b>Constitution save</b> (d20 + 2) and get 10 or half the damage, whichever is higher, or the spell ends.</p>
+    <p><b>No costs, no components.</b> You always have whatever your spells need (herbs, crystals, diamonds, incense, anything). Just cast.</p>
     <p><b>Bonus Action spell rule:</b> if you cast a spell using a slot on your turn, you can't cast a second spell with a slot that same turn. A cantrip is fine.</p>
   </div>
   <h4 class="lvl">Cantrips <span class="muted">(free, unlimited)</span></h4><details class="spell"><summary><span class="sname">Starry Wisp</span><span class="smeta">Action · 60 feet</span></summary>
@@ -229,8 +230,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 
 </div></details><h4 class="lvl">3rd level <span class="muted">(2 slots)</span></h4><details class="spell"><summary><span class="sname">Revivify</span><span class="smeta">Action · Touch</span></summary>
 <div class="sbody">
-<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div><div><dt>Needs</dt><dd>A diamond worth 300 GP or more, used up. YOU DO NOT HAVE ONE YET. Buy or find one.</dd></div></dl>
-<p>Touch a creature that died within the last minute. It comes back to life with 1 Hit Point. It can't bring back someone who died of old age or is missing body parts it needs to live. It only works with a 300 GP diamond.</p>
+<dl class="facts"><div><dt>Casting time</dt><dd>Action</dd></div><div><dt>Range</dt><dd>Touch</dd></div><div><dt>Lasts</dt><dd>Instant</dd></div></dl>
+<p>Touch a creature that died within the last minute. It comes back to life with 1 Hit Point. It can't bring back someone who died of old age or is missing body parts it needs to live.</p>
 <p class="roll"><b>What to roll:</b> Nothing to roll.</p>
 
 </div></details><details class="spell"><summary><span class="sname">Conjure Animals</span><span class="smeta">Action · 60 feet</span><span class="pill conc">Concentration</span></summary>
@@ -275,7 +276,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
 
 <section id="gear">
   <h2>Gear</h2>
-  <div class="card"><ul><li>Leather armor (worn)</li><li>Shield (paint your star map on it!)</li><li>Quarterstaff, your druidic focus</li><li>Sickle</li><li>Spear</li><li>Light Crossbow, quiver, and 20 bolts</li><li>Explorer's Pack: backpack, bedroll, 2 flasks of oil, 10 days of rations, 50 ft of rope, tinderbox, 10 torches, waterskin</li><li>Herbalism Kit</li><li>Gaming set (dice)</li><li>Hooded lantern</li><li>Manacles</li><li>Traveler's clothes</li><li>21 gold pieces</li><li>Need for Revivify: a diamond worth 300 GP (you don't have one)</li></ul>
+  <div class="card"><ul><li>Leather armor (worn)</li><li>Shield (paint your star map on it!)</li><li>Quarterstaff, your druidic focus</li><li>Sickle</li><li>Spear</li><li>Light Crossbow and a quiver of bolts (never runs out)</li><li>Explorer's Pack: backpack, bedroll, 2 flasks of oil, 10 days of rations, 50 ft of rope, tinderbox, 10 torches, waterskin</li><li>Herbalism Kit</li><li>Gaming set (dice)</li><li>Hooded lantern</li><li>Manacles</li><li>Traveler's clothes</li><li>21 gold pieces</li></ul>
   <p><b>Tools you can use:</b> Herbalism Kit, Dice set. Add your proficiency (+3) to checks with them.</p>
   <p><b>Languages:</b> Common, Gnomish, Goblin, Druidic.</p></div>
 </section>
