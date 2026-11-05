@@ -39,14 +39,14 @@ const SKILLS = {
   Survival: ['wis', 'Tracking, hunting, finding your way, predicting weather.'],
 };
 const FORMS = {
-  'Cat': { size: 'Tiny', ac: 12, speed: '40 ft, climb 40 ft', atk: 'Scratch: d20 + 4 to hit, 1 Slashing', notes: 'Perception +3, Stealth +4, Darkvision 60 ft. Jumps using Dexterity. For spying and sneaking. Nobody suspects a cat.' },
-  'Spider': { size: 'Tiny', ac: 12, speed: '20 ft, climb 20 ft (walls and ceilings, no check needed)', atk: 'Bite: d20 + 4 to hit, 1 Piercing + 1d4 Poison', notes: 'Stealth +4, Darkvision 30 ft. Walks on webs freely. Squeeze under doors and through cracks.' },
+  'Cat': { size: 'Tiny', ac: 12, speed: '40 ft, climb 40 ft', atk: 'Scratch: d20 + 4 to hit, 1 Slashing', notes: 'Perception +3, Stealth +4, Darkvision 60 ft. Jumps using Dexterity.' },
+  'Spider': { size: 'Tiny', ac: 12, speed: '20 ft, climb 20 ft (walls and ceilings, no check needed)', atk: 'Bite: d20 + 4 to hit, 1 Piercing + 1d4 Poison', notes: 'Stealth +4, Darkvision 30 ft. Walks on webs freely.' },
   'Wolf': { size: 'Medium', ac: 12, speed: '40 ft', atk: 'Bite: d20 + 4 to hit, 1d6 + 2 Piercing. If the target is Medium or smaller, it is knocked Prone (no save)', notes: 'Pack Tactics: advantage on attacks if a friend is next to the target. Perception +5, Stealth +4, Darkvision 60 ft.' },
-  'Black Bear': { size: 'Medium', ac: 11, speed: '30 ft, climb 30 ft, swim 30 ft', atk: 'Two Rend attacks per Attack action: each d20 + 4 to hit, 1d6 + 2 Slashing', notes: 'Perception +5, Darkvision 60 ft. Your best all-round fighting form.' },
-  'Warhorse': { size: 'Large', ac: 11, speed: '60 ft', atk: 'Hooves: d20 + 6 to hit, 2d4 + 4 Bludgeoning. If you moved 20+ feet straight at a Large-or-smaller target first: +2d4 more and it falls Prone', notes: 'A friend can ride you. Fastest way to get somewhere or escape.' },
-  'Crocodile': { size: 'Large', ac: 12, speed: '20 ft, swim 30 ft', atk: 'Bite: d20 + 4 to hit, 1d8 + 2 Piercing. A Medium-or-smaller target is Grappled (escape DC 12) and Restrained while grappled', notes: 'Holds its breath for 1 hour. For water.' },
-  'Reef Shark': { size: 'Medium', ac: 12, speed: '5 ft, swim 30 ft (breathes only underwater)', atk: 'Bite: d20 + 4 to hit, 2d4 + 2 Piercing', notes: 'Pack Tactics. Blindsight 30 ft. For underwater fights only.' },
-  'Giant Venomous Snake': { size: 'Medium', ac: 14, speed: '40 ft, swim 40 ft', atk: 'Bite: d20 + 6 to hit, reach 10 ft, 1d4 + 4 Piercing + 1d8 Poison', notes: 'Best AC of your forms, and it hits from 10 feet away. Blindsight 10 ft.' },
+  'Black Bear': { size: 'Medium', ac: 11, speed: '30 ft, climb 30 ft, swim 30 ft', atk: 'Two Rend attacks per Attack action: each d20 + 4 to hit, 1d6 + 2 Slashing', notes: 'Perception +5, Darkvision 60 ft.' },
+  'Warhorse': { size: 'Large', ac: 11, speed: '60 ft', atk: 'Hooves: d20 + 6 to hit, 2d4 + 4 Bludgeoning. If you moved 20+ feet straight at a Large-or-smaller target first: +2d4 more and it falls Prone', notes: 'A creature can ride you.' },
+  'Crocodile': { size: 'Large', ac: 12, speed: '20 ft, swim 30 ft', atk: 'Bite: d20 + 4 to hit, 1d8 + 2 Piercing. A Medium-or-smaller target is Grappled (escape DC 12) and Restrained while grappled', notes: 'Holds its breath for 1 hour.' },
+  'Reef Shark': { size: 'Medium', ac: 12, speed: '5 ft, swim 30 ft (breathes only underwater)', atk: 'Bite: d20 + 4 to hit, 2d4 + 2 Piercing', notes: 'Pack Tactics. Blindsight 30 ft.' },
+  'Giant Venomous Snake': { size: 'Medium', ac: 14, speed: '40 ft, swim 40 ft', atk: 'Bite: d20 + 6 to hit, reach 10 ft, 1d4 + 4 Piercing + 1d8 Poison', notes: 'Blindsight 10 ft.' },
 };
 
 const mod = (s) => Math.floor((s - 10) / 2);
@@ -119,10 +119,9 @@ function page(c) {
   const atkRows = c.attacks.map((a) => {
     const add = a[1] === '—';
     const hit = a[1] === 'Save' ? '<div class="kv"><span class="k">Target rolls</span><span class="v">a save</span></div>' : add ? '' : `<div class="kv"><span class="k">To hit</span><span class="v">d20 ${a[1].replace('+', '+ ')}</span></div>`;
-    return `<li class="atk${add ? ' add' : ''}"><h3 class="aname">${esc(a[0])}</h3><div class="kvs">${hit}<div class="kv"><span class="k">${add ? 'Adds' : a[1] === 'Save' ? 'Effect' : 'Damage'}</span><span class="v">${esc(a[2])}</span></div>${add ? '' : `<div class="kv"><span class="k">Range</span><span class="v r">${esc(a[3])}</span></div>`}</div><p class="use">${esc(a[4])}</p></li>`;
+    return `<li class="atk${add ? ' add' : ''}"><h3 class="aname">${esc(a[0])}</h3><div class="kvs">${hit}<div class="kv"><span class="k">${add ? 'Adds' : a[1] === 'Save' ? 'Effect' : 'Damage'}</span><span class="v">${esc(a[2])}</span></div>${add ? '' : `<div class="kv"><span class="k">Range</span><span class="v r">${esc(a[3])}</span></div>`}</div>${a[4] ? `<p class="use">${esc(a[4])}</p>` : ''}</li>`;
   }).join('');
-  const turn = c.turn.map(([h, t]) => `<div class="tr"><dt>${h}</dt><dd>${t}</dd></div>`).join('');
-  const who = Object.entries(c.who || {}).map(([k, v]) => `<p><b>${esc(k)}:</b> ${esc(v)}</p>`).join('') || '<p class="muted">Nothing written yet. Make up a look, a habit, and one thing you want. Tell your DM.</p>';
+  const who = Object.entries(c.who || {}).map(([k, v]) => `<p><b>${esc(k)}:</b> ${esc(v)}</p>`).join('') || '<p class="muted">Nothing written yet.</p>';
 
   return `<!doctype html>
 <html lang="en">
@@ -232,7 +231,6 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
   <p class="eyebrow">Character sheet · Level 5${c.pronouns ? ' · ' + esc(c.pronouns) : ''}</p>
   <h1>${esc(c.name)}</h1>
   <p class="line">${esc(c.line)}</p>
-  <p style="margin-top:8px">${esc(c.intro)}</p>
   <div class="stats">
     <div class="stat"><div class="k">Armor Class</div><div class="v">${c.ac}</div><div class="n">${esc(c.acNote)}</div></div>
     <div class="stat"><div class="k">Hit Points</div><div class="v">${c.hp}</div><div class="n">Maximum. Hit Dice: 5 × d${c.hitDie}</div></div>
@@ -244,7 +242,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
     <div class="stat"><div class="k">Spell Attack</div><div class="v">${sg(satk)}</div><div class="n">Add to d20 for spell attacks</div></div>
   </div>
 </header>
-<nav aria-label="Jump to"><a href="#turn">Your turn</a><a href="#track">Tracker</a><a href="#attacks">Attacks</a>${isCaster ? '<a href="#spells">Spells</a>' : ''}<a href="#features">Abilities</a>${c.forms ? '<a href="#forms">Animal forms</a>' : ''}<a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
+<nav aria-label="Jump to"><a href="#track">Tracker</a><a href="#attacks">Attacks</a>${isCaster ? '<a href="#spells">Spells</a>' : ''}<a href="#features">Abilities</a>${c.forms ? '<a href="#forms">Animal forms</a>' : ''}<a href="#scores">Scores &amp; skills</a><a href="#gear">Gear</a><a href="#you">Who you are</a><a href="#rules">Rules help</a></nav>
 
 <section id="how">
   <div class="callout">
@@ -252,11 +250,6 @@ footer { margin-top: 40px; color: var(--muted); font-size: .85rem; }
   </div>
 </section>
 
-<section id="turn">
-  <h2>Your turn, step by step</h2>
-  <p class="muted">In a fight, on your turn you can <b>move</b> up to ${c.speed} feet, take <b>one Action</b>, and maybe <b>one Bonus Action</b> if something gives you one. Once per round you can also take a <b>Reaction</b>, even on other people's turns. Here's what usually works best for ${esc(c.name.split(' ')[0])}:</p>
-  <dl class="card turn">${turn}</dl>
-</section>
 
 <section id="track">
   <h2>Tracker</h2>
@@ -344,7 +337,7 @@ ${c.forms ? `<section id="forms">
   <details><summary><span class="sname">Hit Points, dropping to 0, and death saves</span></summary><div class="sbody">
     <p>Damage lowers your HP. <b>Temporary HP</b> absorbs damage first and doesn't stack. At <b>0 HP</b> you fall unconscious.</p>
     <p>At the start of each of your turns at 0 HP, roll a <b>death saving throw</b>: a plain d20, nothing added. <b>10 or higher</b> = a success, <b>9 or lower</b> = a failure. <b>3 successes</b>: you're stable. <b>3 failures</b>: you die. A <b>natural 20</b>: you wake up with 1 HP. A <b>natural 1</b>: two failures. Taking damage while at 0 = one failure (a critical hit = two).</p>
-    <p><b>Any healing at all wakes you up.</b> That's why Healing Word matters so much. A friend can also stabilize you with a DC 10 Wisdom (Medicine) check.</p>
+    <p><b>Any healing at all wakes you up.</b> A friend can also stabilize you with a DC 10 Wisdom (Medicine) check.</p>
   </div></details>
   <details><summary><span class="sname">Resting</span></summary><div class="sbody">
     <p><b>Short Rest</b> (1 hour of downtime): spend Hit Dice to heal. Roll a d${c.hitDie}, add your Constitution modifier (${sg(m.con)}), and heal that much, as many times as you have Hit Dice left. Some features come back too (it says so on each one).</p>
